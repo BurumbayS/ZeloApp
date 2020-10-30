@@ -49,7 +49,7 @@ class AuthPageState extends State<AuthPage> {
     );
 
     var responseJson = json.decode(response.body);
-    
+
     if (responseJson['code'] == 0) {
       Storage.shared.setItem("token", responseJson['token'].toString());
       Storage.shared.setItem("user_data", json.encode(responseJson['user']));
@@ -440,7 +440,7 @@ class AuthPageState extends State<AuthPage> {
           child: FlatButton(
             color: (_fieldsFilledCorrectly()) ? Colors.blue[400] : Colors.grey,
             textColor: Colors.white,
-            splashColor: (_fieldsFilledCorrectly()) ? Colors.blue[700] : Colors.grey[0],
+            splashColor: (_fieldsFilledCorrectly()) ? Colors.blue[700] : Colors.grey,
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(25.0)
             ),

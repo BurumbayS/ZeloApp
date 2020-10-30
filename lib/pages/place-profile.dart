@@ -166,9 +166,8 @@ class PlaceProfileState extends State<PlaceProfile>{
 
     if (!_isAuthenticated) {
       showDialog(context: context, builder: (_) => CustomAlertDialog.shared.dialog("Хотите зарегестрироваться?\n", "Для заказа блюда вам необходимо зарегестрироваться", false, context, () {
-          Navigator.pop(context);
           Navigator.of(context).push(
-              MaterialPageRoute(
+              CupertinoPageRoute(
                   fullscreenDialog: true,
                   builder: (context) => AuthPage()
               )

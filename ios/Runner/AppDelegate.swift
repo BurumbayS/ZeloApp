@@ -1,5 +1,6 @@
 import UIKit
 import Flutter
+import YandexMapKit
 
 @UIApplicationMain
 @objc class AppDelegate: FlutterAppDelegate {
