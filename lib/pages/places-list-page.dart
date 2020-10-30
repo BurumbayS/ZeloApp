@@ -50,7 +50,6 @@ class PlacesListState extends State<PlacesList> {
       Navigator.push(context,CupertinoPageRoute(builder: (context) => ProfilePage()));
     } else {
       showDialog(context: context, builder: (_) => CustomAlertDialog.shared.dialog("Хотите зарегестрироваться?\n", "Для заказа блюда вам необходимо зарегестрироваться", false, context, () {
-        Navigator.pop(context);
         Navigator.of(context).push(
             MaterialPageRoute(
                 fullscreenDialog: true,

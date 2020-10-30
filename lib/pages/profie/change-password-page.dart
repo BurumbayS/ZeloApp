@@ -1,7 +1,12 @@
 
+import 'dart:convert';
+
+import 'package:ZeloApp/services/Network.dart';
+import 'package:ZeloApp/utils/alertDialog.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:http/http.dart' as http;
 
 enum ChangePasswordSection {
   OLD_PASSWORD,
@@ -42,8 +47,6 @@ class ChangePasswordPageState extends State<ChangePasswordPage> {
   }
 
   bool _fieldsFilledCorrectly() {
-    print('checking');
-
     if (_oldPassTextFieldController.text != "" && _newPassTextFieldController.text != "" && _confirmedPassTextFieldController.text != "") {
       return true;
     }
@@ -51,11 +54,34 @@ class ChangePasswordPageState extends State<ChangePasswordPage> {
     return false;
   }
 
-  void _changePassword() {
+  void _changePassword() async {
     if (_newPassTextFieldController.text != _confirmedPassTextFieldController.text) {
       setState(() {
         _errorText = 'Пароли не совпадают';
       });
+    }
+
+    var _dataToUpdate = {
+      "old_password": _oldPassTextFieldController.text,
+      "new_password": _newPassTextFieldController.text
+    };
+
+    http.Response response = await http.put(
+        Network.api + "/reset_password/",
+        headers: Network.shared.headers(),
+        body: jsonEncode(_dataToUpdate)
+    );
+
+    var json = jsonDecode(response.body);
+
+    if (json['code'] == 1) {
+      setState(() {
+        _errorText = json['error'];
+      });
+    } else {
+      showDialog(context: context, builder: (_) => CustomAlertDialog.shared.dialog("Поздравляем!\n", "Ваш пароль успешно изменен", true, context, () {
+        Navigator.pop(context);
+      }));
     }
   }
 
@@ -102,7 +128,9 @@ class ChangePasswordPageState extends State<ChangePasswordPage> {
       children: <Widget>[
         TextFormField(
           onChanged: (text) {
-            setState(() {});
+            setState(() {
+              _errorText = "";
+            });
           },
           controller: _sectionController(section),
           obscureText: true,
