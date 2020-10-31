@@ -8,17 +8,19 @@ import 'package:ZeloApp/services/Storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 enum ProfileSections {
   HEADER,
   CHANGE_PASS,
   MY_ORDERS,
+  PRIVACY_POLICY,
   LOGOUT
 }
 
 class ProfilePageState extends State<ProfilePage> {
 
-  var sections = [ProfileSections.HEADER, ProfileSections.CHANGE_PASS, ProfileSections.MY_ORDERS, ProfileSections.LOGOUT];
+  var sections = [ProfileSections.HEADER, ProfileSections.CHANGE_PASS, ProfileSections.PRIVACY_POLICY, ProfileSections.LOGOUT];
   User user;
 
   @override
@@ -43,6 +45,8 @@ class ProfilePageState extends State<ProfilePage> {
         return 'Сменить пароль';
       case ProfileSections.MY_ORDERS:
         return 'Мои заказы';
+      case ProfileSections.PRIVACY_POLICY:
+        return 'Политика конфиденциальности';
       case ProfileSections.LOGOUT:
         return 'Выйти';
     }
@@ -53,10 +57,20 @@ class ProfilePageState extends State<ProfilePage> {
       case ProfileSections.CHANGE_PASS:
         _changePassword();
         break;
-      case ProfileSections.MY_ORDERS:
+      case ProfileSections.PRIVACY_POLICY:
+        _openPrivacyPolicy();
         break;
       case ProfileSections.LOGOUT:
         _logout();
+    }
+  }
+
+  void _openPrivacyPolicy() async{
+    const url = 'https://zelodostavka.me/api/privacy_policy/';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
     }
   }
 
