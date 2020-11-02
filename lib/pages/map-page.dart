@@ -15,16 +15,18 @@ import 'package:location/location.dart' as geolocator;
 // ignore: must_be_immutable
 class MapSearchPage extends StatefulWidget{
 
-  Address address;
+  Address myAddress;
   Address newAddress;
+  Coordinates placeCoordinates;
 
-  MapSearchPage(Address address) {
-    this.address = address;
+  MapSearchPage(Address address, Coordinates placeCoordinates) {
+    this.myAddress = address;
+    this.placeCoordinates = placeCoordinates;
   }
 
   @override
   State<StatefulWidget> createState() {
-    return new MapSearchPageState(this.address);
+    return new MapSearchPageState(this.myAddress);
   }
 }
 
@@ -33,8 +35,6 @@ class MapSearchPageState extends State<MapSearchPage>  {
   static const PLACE_API_KEY = "AIzaSyC4ATGNItCqpljzi47MRKMFGRT-ZNZvtJg";
   PermissionStatus _permissionStatus = PermissionStatus.unknown;
 
-//  String searchText = "";
-//  String response = '';
   bool _loading = false;
 
   int _requestCount = 0;
@@ -75,6 +75,9 @@ class MapSearchPageState extends State<MapSearchPage>  {
       double lat = arguments['latitude'];
       double long = arguments['longitude'];
 
+      double placeLat = widget.placeCoordinates.latitude;
+      double placeLong = widget.placeCoordinates.longitude;
+
       address.latitude = lat;
       address.longitude = long;
 
@@ -82,7 +85,7 @@ class MapSearchPageState extends State<MapSearchPage>  {
       String request = '$baseURL?format=json&apikey=583d6b1f-a874-49de-8897-38a706b71f96&geocode=$long,$lat';
       Response response = await Dio().get(request);
 
-      Response distanceResponse = await Dio().get("https://maps.googleapis.com/maps/api/distancematrix/json?language=ru_RU&units=metric&origins=45.01271475297843,78.4021995759503&destinations=$lat,$long&key=AIzaSyDxgI8Z7Tw33nw46fsN98hEEwTdqgZoCBY");
+      Response distanceResponse = await Dio().get("https://maps.googleapis.com/maps/api/distancematrix/json?language=ru_RU&units=metric&origins=$placeLat,$placeLong&destinations=$lat,$long&key=AIzaSyDxgI8Z7Tw33nw46fsN98hEEwTdqgZoCBY");
 
       setState(() {
         String addressString = response.data['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']['name'];

@@ -34,6 +34,7 @@ class PlacesListState extends State<PlacesList> {
     var placesList = new List<Place>();
 
     placesJson.forEach((element) {
+      print(element);
       var place = Place.fromJson(element);
       placesList.add(place);
     });

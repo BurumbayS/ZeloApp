@@ -53,8 +53,9 @@ extension SectionTypeExtension on SectionType {
 class OrderPage extends StatefulWidget{
   List<OrderItem> _orderItems;
   final int place_id;
+  final Coordinates placeCoordinates;
 
-  OrderPage(List<OrderItem> items, this.place_id) {
+  OrderPage(List<OrderItem> items, this.place_id, this.placeCoordinates) {
     _orderItems = items;
   }
 
@@ -65,8 +66,6 @@ class OrderPage extends StatefulWidget{
 }
 
 class OrderPageState extends State<OrderPage> {
-  Address _address = new Address();
-  String _contactNumber = '';
   int _section = 0;
   int _row = 0;
   Order _order = new Order();
@@ -158,6 +157,31 @@ class OrderPageState extends State<OrderPage> {
           )
       ));
     }
+
+  }
+
+  void _calculateDeliveryPrice(int distance) {
+    var price = 0;
+
+    if (distance < 1500) {
+      price = 300;
+    }
+    if (distance > 1500 && distance <= 4000) {
+      price = 400;
+    }
+    if (distance > 4000 && distance <= 6000) {
+      price = 500;
+    }
+    if (distance > 6000 && distance <= 7500) {
+      price = 600;
+    }
+    if (distance > 7500) {
+      price = 800;
+    }
+
+    setState(() {
+      _order.deliveryPrice = price;
+    });
 
   }
 
@@ -464,7 +488,7 @@ class OrderPageState extends State<OrderPage> {
         final result = await Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => MapSearchPage(_order.deliveryAddress),
+              builder: (context) => MapSearchPage(_order.deliveryAddress, widget.placeCoordinates),
             )
         );
 
@@ -472,6 +496,8 @@ class OrderPageState extends State<OrderPage> {
           setState(() {
             _order.deliveryAddress = result;
           });
+
+          _calculateDeliveryPrice(_order.deliveryAddress.distance);
         }
       },
       child: Column (

@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:ZeloApp/models/Address.dart';
 import 'package:ZeloApp/pages/auth/auth-page.dart';
 import 'package:ZeloApp/services/Network.dart';
 import 'package:ZeloApp/pages/order-page.dart';
@@ -156,7 +157,7 @@ class PlaceProfileState extends State<PlaceProfile>{
     Navigator.of(context).push(
         CupertinoPageRoute(
             fullscreenDialog: true,
-            builder: (context) => OrderPage(selectedOrderItems, _placeInfo.id)
+            builder: (context) => OrderPage(selectedOrderItems, _placeInfo.id, Coordinates(_placeInfo.latitude, _placeInfo.longitude))
         )
     );
   }
