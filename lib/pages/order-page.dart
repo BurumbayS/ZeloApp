@@ -134,7 +134,7 @@ class OrderPageState extends State<OrderPage> {
 
   void _placeOrder() async {
     var userData = await Storage.itemBy('user_data');
-    var userJson = json.decode(userData);
+    var userJson = jsonDecode(userData);
 
     _order.placeID = widget.place_id;
     _order.clientID = userJson['id'];
@@ -148,12 +148,17 @@ class OrderPageState extends State<OrderPage> {
         body: jsonEncode(_order)
     );
 
-    print(response.body);
-//    Navigator.push(context, CupertinoPageRoute(
-//        builder: (context) => CompletedOrderPage(
-//          order: _order,
-//        )
-//    ));
+    var json = jsonDecode(response.body);
+    print(json);
+
+    if (json['code'] == 0) {
+      Navigator.pushReplacement(context, CupertinoPageRoute(
+          builder: (context) => CompletedOrderPage(
+            order: _order,
+          )
+      ));
+    }
+
   }
 
   Widget iosAlertDialog(OrderItem item) {
