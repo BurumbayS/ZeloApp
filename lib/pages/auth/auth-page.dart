@@ -4,9 +4,11 @@ import 'package:ZeloApp/services/Network.dart';
 import 'package:ZeloApp/services/Storage.dart';
 import 'package:ZeloApp/utils/alertDialog.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
+import 'package:url_launcher/url_launcher.dart';
 
 class AuthPage extends StatefulWidget {
 
@@ -24,10 +26,11 @@ class AuthPageState extends State<AuthPage> {
   final _passwordTextFieldController = TextEditingController();
 
   bool _hasAccount = false;
+  bool _agreeForTerms = false;
 
   bool _fieldsFilledCorrectly() {
 
-    if (!_hasAccount && _nameTextFieldController.text != "" && _mailTextFieldController.text != "" && _passwordTextFieldController.text != "") {
+    if (_agreeForTerms && !_hasAccount && _nameTextFieldController.text != "" && _mailTextFieldController.text != "" && _passwordTextFieldController.text != "") {
       return true;
     }
 
@@ -49,7 +52,7 @@ class AuthPageState extends State<AuthPage> {
     );
 
     var responseJson = json.decode(response.body);
-    
+
     if (responseJson['code'] == 0) {
       Storage.shared.setItem("token", responseJson['token'].toString());
       Storage.shared.setItem("user_data", json.encode(responseJson['user']));
@@ -95,6 +98,15 @@ class AuthPageState extends State<AuthPage> {
               "Ошибки создания аккаунта!",
               true,
               context, () {}));
+    }
+  }
+
+  void _openPrivacyPolicy() async{
+    const url = 'https://zelodostavka.me/api/privacy_policy/';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
     }
   }
 
@@ -282,6 +294,70 @@ class AuthPageState extends State<AuthPage> {
             )
         ),
 
+        InkWell(
+          onTap: () {
+            setState(() {
+              _agreeForTerms = !_agreeForTerms;
+            });
+          },
+          child: Padding(
+            padding: EdgeInsets.only(top: 30, left: 30, right: 30),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                (_agreeForTerms) ?
+                Container(
+                  width: 20,
+                  height: 20,
+                  decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: AssetImage('assets/images/check.png'),
+                        fit: BoxFit.cover
+                      ),
+                  ),
+                ) : Container(
+                  width: 20,
+                  height: 20,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                      border: Border.all(color: Colors.blue)
+                  ),
+                ),
+
+                Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.only(left: 20),
+                    child: RichText (
+                      text: TextSpan(
+                        children: <TextSpan> [
+                          TextSpan(
+                            text: 'Согласен с условиями ',
+                            style: GoogleFonts.openSans(
+                              fontSize: 14,
+                              color: Colors.black
+                            )
+                          ),
+                          TextSpan (
+                            text: 'политики конфиденциальности',
+                            style: GoogleFonts.openSans(
+                              color: Colors.blue,
+                              fontSize: 14
+                            ),
+                            recognizer: TapGestureRecognizer()
+                                ..onTap = () {
+                                  _openPrivacyPolicy();
+                                }
+                          )
+                        ]
+                      ),
+                    )
+                  )
+                )
+
+              ],
+            ),
+          )
+        ),
         //button field
         Container(
           height: 50,
@@ -440,7 +516,7 @@ class AuthPageState extends State<AuthPage> {
           child: FlatButton(
             color: (_fieldsFilledCorrectly()) ? Colors.blue[400] : Colors.grey,
             textColor: Colors.white,
-            splashColor: (_fieldsFilledCorrectly()) ? Colors.blue[700] : Colors.grey[0],
+            splashColor: (_fieldsFilledCorrectly()) ? Colors.blue[700] : Colors.grey,
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(25.0)
             ),

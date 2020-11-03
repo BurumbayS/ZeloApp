@@ -41,7 +41,7 @@ dependencies:
   web_socket_channel: ^1.1.0
   localstorage: ^3.0.1+4
   flutter_spinkit: ^4.1.2
-
+  url_launcher: ^5.4.0
 
 dev_dependencies:
   flutter_test:

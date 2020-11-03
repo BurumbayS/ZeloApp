@@ -4,6 +4,16 @@ part 'Address.g.dart';
 
 @JsonSerializable()
 
+class Coordinates {
+  double latitude;
+  double longitude;
+
+  Coordinates(double lat, double long) {
+    this.latitude = lat;
+    this.longitude = long;
+  }
+}
+
 class Address {
   double latitude;
   double longitude;
