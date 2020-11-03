@@ -187,7 +187,7 @@ class PlacesListState extends State<PlacesList> {
                           ),
 
                           Text(
-                              place.deliveryMinPrice.toString() + ' ₸',
+                              'от ' + place.deliveryMinPrice.toString() + ' KZT',
                               style: GoogleFonts.montserratAlternates(
                                 fontSize: 16,
                                 color: Colors.blue,
