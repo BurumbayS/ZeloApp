@@ -13,6 +13,7 @@ class Place {
   double longitude;
   @JsonKey(name: 'delivery_min_price')
   final int deliveryMinPrice;
+  Map<String, String> categories;
   String wallpaper;
 
   Place(this.id, this.name, this.description, this.address, this.longitude, this.latitude, this.deliveryMinPrice, this.wallpaper);

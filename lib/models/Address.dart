@@ -2,8 +2,6 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'Address.g.dart';
 
-@JsonSerializable()
-
 class Coordinates {
   double latitude;
   double longitude;
@@ -13,6 +11,8 @@ class Coordinates {
     this.longitude = long;
   }
 }
+
+@JsonSerializable()
 
 class Address {
   double latitude;
