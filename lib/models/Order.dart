@@ -31,6 +31,7 @@ class Order {
   Address deliveryAddress;
   @JsonKey(name: 'contact_phone')
   String contactPhone;
+  String comment;
 
   Order() {
     orderStatus = OrderStatus.NEW;
@@ -38,6 +39,7 @@ class Order {
     deliveryAddress = new Address();
     deliveryPrice = 0;
     contactPhone = '';
+    comment = '';
   }
 
   factory Order.fromJson(Map<String, dynamic> json) => _$OrderFromJson(json);

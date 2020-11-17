@@ -154,6 +154,14 @@ class PlaceProfileState extends State<PlaceProfile>{
     return _selectedItemsCount > 0;
   }
 
+  bool _shouldAddBottomPadding(index) {
+    if (index == _categorizedMenuItems[_selectedCategory].length - 1 && _selectedItemsCount > 0) {
+      return true;
+    }
+
+    return false;
+  }
+
   String _getOrderTotalInfo() {
     int totalCount = 0;
     int totalPrice = 0;
@@ -538,7 +546,7 @@ class PlaceProfileState extends State<PlaceProfile>{
 
             Container(
               height: 1,
-              margin: EdgeInsets.only(left: 10, right: 5),
+              margin: _shouldAddBottomPadding(itemIndex) ? EdgeInsets.only(left: 10, right: 5, bottom: 120) : EdgeInsets.only(left: 10, right: 5, bottom: 20),
               decoration: BoxDecoration(
                 color: Colors.grey[200],
                 borderRadius: BorderRadius.all(Radius.circular(0.2)),
