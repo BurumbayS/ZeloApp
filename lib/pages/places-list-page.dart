@@ -34,7 +34,6 @@ class PlacesListState extends State<PlacesList> {
     var placesList = new List<Place>();
 
     placesJson.forEach((element) {
-      print(element);
       var place = Place.fromJson(element);
       placesList.add(place);
     });
@@ -209,7 +208,7 @@ class PlacesListState extends State<PlacesList> {
 
         alignment: Alignment.topLeft,
         margin: EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
-        height: 190,
+        height: 195,
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.all(Radius.circular(10.0)),

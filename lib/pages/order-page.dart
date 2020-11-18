@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:ZeloApp/models/Address.dart';
+import 'package:ZeloApp/pages/order-comment-page.dart';
 import 'package:ZeloApp/services/Storage.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -20,6 +21,7 @@ enum SectionType {
   order,
   address,
   contactNumber,
+  comment,
   payment
 }
 extension SectionTypeExtension on SectionType {
@@ -31,6 +33,8 @@ extension SectionTypeExtension on SectionType {
         return "Адрес доставки";
       case SectionType.contactNumber:
         return "Контактный номер";
+      case SectionType.comment:
+        return "Комментарий";
       case SectionType.payment:
         return "К оплате";
     }
@@ -43,6 +47,8 @@ extension SectionTypeExtension on SectionType {
       case SectionType.address:
         return 1;
       case SectionType.contactNumber:
+        return 1;
+      case SectionType.comment:
         return 1;
       case SectionType.payment:
         return 1;
@@ -70,7 +76,7 @@ class OrderPageState extends State<OrderPage> {
   int _row = 0;
   Order _order = new Order();
 
-  List<SectionType> _sections = [SectionType.order, SectionType.address, SectionType.contactNumber, SectionType.payment];
+  List<SectionType> _sections = [SectionType.order, SectionType.address, SectionType.contactNumber, SectionType.comment, SectionType.payment];
 //  List<OrderItem> _orderItems;
   final GlobalKey<AnimatedListState> orderListKey = GlobalKey<AnimatedListState>();
 
@@ -286,7 +292,6 @@ class OrderPageState extends State<OrderPage> {
             AnimatedList(
                 key: orderListKey,
                 initialItemCount: _itemsCount(),
-//                itemCount: _itemsCount(),
                 padding: const EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 120),
                 itemBuilder: (context, i, animation) {
                   SectionType currentSection = _sections[_section];
@@ -316,6 +321,8 @@ class OrderPageState extends State<OrderPage> {
                       return _addressItem();
                     case SectionType.contactNumber:
                       return _contactNumberItem();
+                    case SectionType.comment:
+                      return _commentItem();
                     case SectionType.payment:
                       return _paymentItem();
                     default:
@@ -533,7 +540,7 @@ class OrderPageState extends State<OrderPage> {
           _order.deliveryAddress.firstAddress,
           maxLines: 2,
           style: GoogleFonts.openSans(
-              fontSize: 16,
+              fontSize: 18,
               color: Colors.black
           ),
         ),
@@ -580,6 +587,41 @@ class OrderPageState extends State<OrderPage> {
 
         Divider()
       ],
+    );
+  }
+
+  Widget _commentItem() {
+    return InkWell (
+      onTap: () async {
+        final result = await Navigator.push(
+            context,
+            CupertinoPageRoute(
+              builder: (context) => OrderCommentPage(_order.comment),
+            )
+        );
+
+        setState(() {
+          _order.comment = result;
+        });
+      },
+      child: Column (
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Container(
+            padding: EdgeInsets.only(left: 16, right: 16, top: 10, bottom: 10),
+            child: Text(
+              (_order.comment == "") ? 'Ваш комментарий' : _order.comment,
+              maxLines: 10,
+              style: GoogleFonts.openSans(
+                  fontSize: 18,
+                  color: (_order.comment == "") ? Colors.grey[500] : Colors.black
+              ),
+            ),
+          ),
+
+          Divider()
+        ],
+      ),
     );
   }
 

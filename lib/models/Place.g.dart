@@ -16,7 +16,9 @@ Place _$PlaceFromJson(Map<String, dynamic> json) {
     (json['latitude'] as num)?.toDouble(),
     json['delivery_min_price'] as int,
     json['wallpaper'] as String,
-  );
+  )..categories = (json['categories'] as Map<String, dynamic>)?.map(
+      (k, e) => MapEntry(k, e as String),
+    );
 }
 
 Map<String, dynamic> _$PlaceToJson(Place instance) => <String, dynamic>{
@@ -27,5 +29,6 @@ Map<String, dynamic> _$PlaceToJson(Place instance) => <String, dynamic>{
       'latitude': instance.latitude,
       'longitude': instance.longitude,
       'delivery_min_price': instance.deliveryMinPrice,
+      'categories': instance.categories,
       'wallpaper': instance.wallpaper,
     };

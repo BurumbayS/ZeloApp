@@ -30,9 +30,10 @@ class PlaceProfile extends StatefulWidget {
 
 class PlaceProfileState extends State<PlaceProfile>{
   int _selectedItemsCount = 0;
-  List<MenuItem> _menuItems = new List();
+  String _selectedCategory = "";
   Map<int, OrderItem> _orderItems = new Map();
   Place _placeInfo;
+  Map<String, List<MenuItem>> _categorizedMenuItems = new Map();
 
   PlaceProfileState(Place place) {
     _placeInfo = place;
@@ -59,14 +60,36 @@ class PlaceProfileState extends State<PlaceProfile>{
       menuItemsList.add(menuItem);
     });
 
+    categorizeMenu(menuItemsList);
+  }
+
+  void categorizeMenu(menuItems) {
+
+    for (var category in _placeInfo.categories.values) {
+      _categorizedMenuItems[category] = new List();
+    }
+
+    for (var item in menuItems) {
+      var category = item.category;
+      _categorizedMenuItems[category].add(item);
+    }
+
     setState(() {
-      _menuItems = menuItemsList;
+      _selectedCategory = _placeInfo.categories["1"];
     });
+  }
+
+  int getCategoryItemsCount(category){
+    return (_categorizedMenuItems[category] != null) ? _categorizedMenuItems[category].length : 0;
+  }
+
+  MenuItem _itemAtIndex(index){
+    return _categorizedMenuItems[_selectedCategory][index];
   }
 
   void _addToOrder(itemIndex) {
     setState(() {
-      var menuItemToAdd = _menuItems[itemIndex];
+      var menuItemToAdd = _itemAtIndex(itemIndex);
       var newOrderItem = OrderItem.fromMenuItem(menuItemToAdd);
       _orderItems[menuItemToAdd.id] = newOrderItem;
 
@@ -76,24 +99,24 @@ class PlaceProfileState extends State<PlaceProfile>{
 
   void _removeFromOrder(itemIndex) {
     setState(() {
-      _orderItems[_menuItems[itemIndex].id] = null;
+      _orderItems[_itemAtIndex(itemIndex).id] = null;
       _selectedItemsCount--;
     });
   }
 
   void _increaseOrderCount(itemIndex) {
     setState(() {
-      var orderItem = _orderItems[_menuItems[itemIndex].id];
+      var orderItem = _orderItems[_itemAtIndex(itemIndex).id];
       orderItem.count++;
     });
   }
 
   void _decreaseOrderCount(itemIndex) {
     setState(() {
-      var orderItem = _orderItems[_menuItems[itemIndex].id];
+      var orderItem = _orderItems[_itemAtIndex(itemIndex).id];
       orderItem.count--;
       if (orderItem.count == 0) {
-        _orderItems[_menuItems[itemIndex].id] = null;
+        _orderItems[_itemAtIndex(itemIndex).id] = null;
         _selectedItemsCount--;
       }
     });
@@ -113,13 +136,13 @@ class PlaceProfileState extends State<PlaceProfile>{
   }
 
   double _heightOfItem(itemIndex) {
-    if (_orderItems[_menuItems[itemIndex].id] != null) { return 50; }
+    if (_orderItems[_itemAtIndex(itemIndex).id] != null) { return 50; }
 
     return 0;
   }
 
   int _getItemOrderCount(itemIndex) {
-    var item = _orderItems[_menuItems[itemIndex].id];
+    var item = _orderItems[_itemAtIndex(itemIndex).id];
     if (item != null) {
       return item.count;
     } else {
@@ -129,6 +152,14 @@ class PlaceProfileState extends State<PlaceProfile>{
 
   bool _shouldShowOrderTotal() {
     return _selectedItemsCount > 0;
+  }
+
+  bool _shouldAddBottomPadding(index) {
+    if (index == _categorizedMenuItems[_selectedCategory].length - 1 && _selectedItemsCount > 0) {
+      return true;
+    }
+
+    return false;
   }
 
   String _getOrderTotalInfo() {
@@ -235,31 +266,35 @@ class PlaceProfileState extends State<PlaceProfile>{
                             ),
                           ),
 
-                          Container(
-                            margin: EdgeInsets.only(right: 15, top: 45),
-                            height: 40,
-                            width: 40,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.all(Radius.circular(20)),
-                                color: Colors.grey[200].withOpacity(0.5)
-                            ),
-
-                            child: Icon(
-                                Icons.search
-                            ),
-                          )
+//                          Container(
+//                            margin: EdgeInsets.only(right: 15, top: 45),
+//                            height: 40,
+//                            width: 40,
+//                            decoration: BoxDecoration(
+//                                borderRadius: BorderRadius.all(Radius.circular(20)),
+//                                color: Colors.grey[200].withOpacity(0.5)
+//                            ),
+//
+//                            child: Icon(
+//                                Icons.search
+//                            ),
+//                          )
                         ],
                       ),
                     ),
                   )
               ),
-              itemCount: _menuItems.length + 1,
+              itemCount: getCategoryItemsCount(_selectedCategory) + 2,
               itemBuilder: (context, index) {
                 if (index == 0) {
                   return _buildHeader();
                 }
 
-                return _buildMenuItem(context, index-1, _menuItems[index-1]);
+                if (index == 1) {
+                  return _buildCategoryRow();
+                }
+
+                return _buildMenuItem(context, index - 2, _categorizedMenuItems[_selectedCategory][index - 2]);
               },
             ),
           ),
@@ -340,6 +375,53 @@ class PlaceProfileState extends State<PlaceProfile>{
           )
 
         ],
+      ),
+    );
+  }
+
+  Widget _buildCategoryRow() {
+    return Container(
+      height: 60,
+      width: double.infinity,
+      decoration: BoxDecoration(
+          border: Border(bottom: BorderSide(
+            width: 1.0,
+            color: Colors.grey[200]
+          ))
+      ),
+      child: ListView.builder(
+          itemCount: _placeInfo.categories.length,
+          scrollDirection: Axis.horizontal,
+          padding: const EdgeInsets.all(10.0),
+          itemBuilder: (context, i) {
+            var category = _placeInfo.categories[(i+1).toString()];
+            return _buildCategory(category);
+          }
+      ),
+    );
+  }
+  Widget _buildCategory(String category) {
+    return InkWell(
+      onTap: () {
+        setState(() {
+          _selectedCategory = category;
+        });
+      },
+      child: Container(
+        height: 50,
+        alignment: Alignment.center,
+        padding: EdgeInsets.only(left: 10, right: 10),
+        decoration: BoxDecoration(
+          color: (_selectedCategory == category) ? Colors.blue[300] : Colors.white,
+          borderRadius: BorderRadius.all(Radius.circular(25.0)),
+        ),
+        child: Text(
+          category,
+          style: GoogleFonts.openSans(
+              fontSize: 16,
+              color: (_selectedCategory == category) ? Colors.white : Colors.black,
+          ),
+        ),
       ),
     );
   }
@@ -464,7 +546,7 @@ class PlaceProfileState extends State<PlaceProfile>{
 
             Container(
               height: 1,
-              margin: EdgeInsets.only(left: 10, right: 5),
+              margin: _shouldAddBottomPadding(itemIndex) ? EdgeInsets.only(left: 10, right: 5, bottom: 120) : EdgeInsets.only(left: 10, right: 5, bottom: 20),
               decoration: BoxDecoration(
                 color: Colors.grey[200],
                 borderRadius: BorderRadius.all(Radius.circular(0.2)),
@@ -476,7 +558,7 @@ class PlaceProfileState extends State<PlaceProfile>{
   }
 
   void _dishInfoModal(context, itemIndex, bool inOrder) {
-    MenuItem selectedItem = _menuItems[itemIndex];
+    MenuItem selectedItem = _categorizedMenuItems[_selectedCategory][itemIndex];
     showModalBottomSheet(context: context, builder: (BuildContext bc) {
       return Container(
         height: 500,
@@ -536,7 +618,7 @@ class PlaceProfileState extends State<PlaceProfile>{
                 ),
               ),
             ),
-  
+
             Container(
               margin: EdgeInsets.only(left: 20, right: 20, bottom: 30),
               width: double.infinity,

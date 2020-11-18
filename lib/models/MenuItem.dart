@@ -8,6 +8,7 @@ class MenuItem {
   int id;
   String name;
   String description;
+  String category;
   int price;
   @JsonKey(name: 'place_id')
   int placeID;
