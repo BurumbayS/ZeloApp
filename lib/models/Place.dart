@@ -11,6 +11,8 @@ class Place {
   String address;
   double latitude;
   double longitude;
+  @JsonKey(name: 'not_working')
+  bool notWorking;
   @JsonKey(name: 'delivery_min_price')
   final int deliveryMinPrice;
   Map<String, String> categories;

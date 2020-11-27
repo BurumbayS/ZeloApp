@@ -208,8 +208,14 @@ class PlaceProfileState extends State<PlaceProfile>{
         })
       );
     } else {
-      (inOrder) ? _removeFromOrder(itemIndex) : _addToOrder(itemIndex);
-      Navigator.pop(context);
+      if (_placeInfo.notWorking) {
+        showDialog(context: context, builder: (_) => CustomAlertDialog.shared.dialog("Простите\n", "Заведение не принимает заказов в данное время", true, context, () {
+          Navigator.pop(context);
+        }));
+      } else {
+        (inOrder) ? _removeFromOrder(itemIndex) : _addToOrder(itemIndex);
+        Navigator.pop(context);
+      }
     }
 
   }
