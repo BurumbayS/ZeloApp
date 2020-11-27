@@ -40,20 +40,20 @@ extension SectionTypeExtension on SectionType {
     }
   }
 
-  int get rowCount {
-    switch (this) {
-      case SectionType.order:
-        return 2;
-      case SectionType.address:
-        return 1;
-      case SectionType.contactNumber:
-        return 1;
-      case SectionType.comment:
-        return 1;
-      case SectionType.payment:
-        return 1;
-    }
-  }
+//  int get rowCount {
+//    switch (this) {
+//      case SectionType.order:
+//        return 2;
+//      case SectionType.address:
+//        return 1;
+//      case SectionType.contactNumber:
+//        return 1;
+//      case SectionType.comment:
+//        return 1;
+//      case SectionType.payment:
+//        return 1;
+//    }
+//  }
 }
 
 class OrderPage extends StatefulWidget{
@@ -73,7 +73,7 @@ class OrderPage extends StatefulWidget{
 
 class OrderPageState extends State<OrderPage> {
   int _section = 0;
-  int _row = 0;
+  int _row = -1;
   Order _order = new Order();
 
   List<SectionType> _sections = [SectionType.order, SectionType.address, SectionType.contactNumber, SectionType.comment, SectionType.payment];
@@ -92,9 +92,10 @@ class OrderPageState extends State<OrderPage> {
 
     _sections.forEach((section) {
       itemsCount++;
-      itemsCount += (section == SectionType.order) ? _order.orderItems.length : section.rowCount;
+      itemsCount += (section == SectionType.order) ? _order.orderItems.length : 1;
     });
 
+    print(itemsCount);
     return itemsCount;
   }
 
@@ -265,6 +266,29 @@ class OrderPageState extends State<OrderPage> {
     );
   }
 
+  Widget _itemAtIndex(index) {
+
+    int restIndex = index - (_order.orderItems.length + 1);
+    int sectionIndex = (restIndex ~/ 2) + 1;
+
+      if (restIndex % 2 == 0) {
+        return _buildListHeader(_sections[sectionIndex].title);
+      } else {
+        switch (_sections[sectionIndex]) {
+          case SectionType.address:
+            return _addressItem();
+          case SectionType.contactNumber:
+            return _contactNumberItem();
+          case SectionType.comment:
+            return _commentItem();
+          case SectionType.payment:
+            return _paymentItem();
+          default:
+            return Container();
+        }
+      }
+  }
+
   OrderPageState(List<OrderItem> items) {
     _order.orderItems = items;
   }
@@ -296,39 +320,14 @@ class OrderPageState extends State<OrderPage> {
                 initialItemCount: _itemsCount(),
                 padding: const EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 120),
                 itemBuilder: (context, i, animation) {
-                  SectionType currentSection = _sections[_section];
-
-                  if (currentSection == SectionType.order && _row > _order.orderItems.length) {
-                    (_section == _sections.length - 1) ? _section = 0 : _section++;
-                    currentSection = _sections[_section];
-                    _row = 0;
-                  } else
-                  if (_row > currentSection.rowCount) {
-                    (_section == _sections.length - 1) ? _section = 0 : _section++;
-                    currentSection = _sections[_section];
-                    _row = 0;
-                  }
-
-                  if (_row == 0) {
-                    _row++;
-                    return _buildListHeader(currentSection.title);
-                  }
-
-                  _row++;
-
-                  switch (_sections[_section]) {
-                    case SectionType.order:
-                      return _orderItem(context, _order.orderItems[_row - 2], animation);
-                    case SectionType.address:
-                      return _addressItem();
-                    case SectionType.contactNumber:
-                      return _contactNumberItem();
-                    case SectionType.comment:
-                      return _commentItem();
-                    case SectionType.payment:
-                      return _paymentItem();
-                    default:
-                      return Container();
+                  if (i <= _order.orderItems.length) {
+                    if (i == 0) {
+                      return _buildListHeader(SectionType.order.title);
+                    } else {
+                      return _orderItem(context, _order.orderItems[i-1], animation);
+                    }
+                  } else {
+                    return _itemAtIndex(i);
                   }
                 }
             ),
