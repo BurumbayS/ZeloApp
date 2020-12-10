@@ -72,8 +72,8 @@ class OrderPage extends StatefulWidget{
 }
 
 class OrderPageState extends State<OrderPage> {
-  int _section = 0;
-  int _row = -1;
+//  int _section = 0;
+//  int _row = -1;
   Order _order = new Order();
 
   List<SectionType> _sections = [SectionType.order, SectionType.address, SectionType.contactNumber, SectionType.comment, SectionType.payment];
@@ -95,7 +95,6 @@ class OrderPageState extends State<OrderPage> {
       itemsCount += (section == SectionType.order) ? _order.orderItems.length : 1;
     });
 
-    print(itemsCount);
     return itemsCount;
   }
 
@@ -172,10 +171,10 @@ class OrderPageState extends State<OrderPage> {
   void _calculateDeliveryPrice(int distance) {
     var price = 0;
 
-    if (distance < 1500) {
+    if (distance < 1000) {
       price = 300;
     }
-    if (distance > 1500 && distance <= 4000) {
+    if (distance > 1000 && distance <= 4000) {
       price = 400;
     }
     if (distance > 4000 && distance <= 6000) {

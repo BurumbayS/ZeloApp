@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:ZeloApp/models/Address.dart';
+import 'package:ZeloApp/services/Network.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -41,11 +42,22 @@ class MapSearchPageState extends State<MapSearchPage>  {
   Address address = new Address();
 
   YandexMapController controller;
+  String _yandexMapKey = "";
 
   @override
   void initState() {
     super.initState();
+
+    _loadMapApiKey();
     _requestPermission();
+  }
+
+  void _loadMapApiKey() async {
+    Response response = await Dio().get(Network.api + "/mapApiKey/");
+
+    if (response.data['code'] == 0) {
+      _yandexMapKey = response.data['key'];
+    }
   }
 
   Future<void> _requestPermission() async {
@@ -82,7 +94,7 @@ class MapSearchPageState extends State<MapSearchPage>  {
       address.longitude = long;
 
       String baseURL = "https://geocode-maps.yandex.ru/1.x/";
-      String request = '$baseURL?format=json&apikey=583d6b1f-a874-49de-8897-38a706b71f96&geocode=$long,$lat';
+      String request = '$baseURL?format=json&apikey=$_yandexMapKey&geocode=$long,$lat';
       Response response = await Dio().get(request);
 
       Response distanceResponse = await Dio().get("https://maps.googleapis.com/maps/api/distancematrix/json?language=ru_RU&units=metric&origins=$placeLat,$placeLong&destinations=$lat,$long&key=AIzaSyDxgI8Z7Tw33nw46fsN98hEEwTdqgZoCBY");
