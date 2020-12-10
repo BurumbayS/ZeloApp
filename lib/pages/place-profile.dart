@@ -193,7 +193,7 @@ class PlaceProfileState extends State<PlaceProfile>{
     );
   }
 
-  void orderItem(bool inOrder, int itemIndex) async {
+  void orderItem(bool inOrder, int itemIndex, MenuItem item) async {
     bool _isAuthenticated = await isAuthenticated();
 
     if (!_isAuthenticated) {
@@ -210,6 +210,11 @@ class PlaceProfileState extends State<PlaceProfile>{
     } else {
       if (_placeInfo.notWorking) {
         showDialog(context: context, builder: (_) => CustomAlertDialog.shared.dialog("Простите\n", "Заведение не принимает заказов в данное время", true, context, () {
+          Navigator.pop(context);
+        }));
+      } else
+      if (item.stopped) {
+        showDialog(context: context, builder: (_) => CustomAlertDialog.shared.dialog("Простите\n", "Данное блюдо не может быть приготовлено в данное время", true, context, () {
           Navigator.pop(context);
         }));
       } else {
@@ -565,6 +570,7 @@ class PlaceProfileState extends State<PlaceProfile>{
 
   void _dishInfoModal(context, itemIndex, bool inOrder) {
     MenuItem selectedItem = _categorizedMenuItems[_selectedCategory][itemIndex];
+
     showModalBottomSheet(context: context, builder: (BuildContext bc) {
       return Container(
         height: 500,
@@ -644,7 +650,7 @@ class PlaceProfileState extends State<PlaceProfile>{
                     )
                 ),
                 onPressed: () {
-                  orderItem(inOrder, itemIndex);
+                  orderItem(inOrder, itemIndex, selectedItem);
                 },
               ),
 
