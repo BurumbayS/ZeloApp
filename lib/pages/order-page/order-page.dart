@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:ZeloApp/models/Address.dart';
-import 'package:ZeloApp/pages/order-comment-page.dart';
+import 'package:ZeloApp/pages/order-page/order-comment-page.dart';
 import 'package:ZeloApp/services/Storage.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -11,11 +11,11 @@ import 'package:web_socket_channel/io.dart';
 import 'completed-order-page.dart';
 import 'map-page.dart';
 import 'package:dotted_line/dotted_line.dart';
-import '../models/OrderItem.dart';
-import '../models/Order.dart';
+import '../../models/OrderItem.dart';
+import '../../models/Order.dart';
 import 'dart:io' show Platform;
 
-import '../services/Network.dart';
+import '../../services/Network.dart';
 
 enum SectionType {
   order,

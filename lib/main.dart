@@ -4,7 +4,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'pages/places-list-page.dart';
+import 'pages/main/places-list-page.dart';
 
 void main() => runApp(MyApp());
 

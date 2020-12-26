@@ -3,16 +3,16 @@ import 'dart:convert';
 import 'package:ZeloApp/models/Address.dart';
 import 'package:ZeloApp/pages/auth/auth-page.dart';
 import 'package:ZeloApp/services/Network.dart';
-import 'package:ZeloApp/pages/order-page.dart';
+import 'package:ZeloApp/pages/order-page/order-page.dart';
 import 'package:ZeloApp/services/Storage.dart';
 import 'package:ZeloApp/utils/alertDialog.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:stretchy_header/stretchy_header.dart';
 import 'package:flutter/cupertino.dart';
-import '../models/Place.dart';
-import '../models/MenuItem.dart';
-import '../models/OrderItem.dart';
+import '../../models/Place.dart';
+import '../../models/MenuItem.dart';
+import '../../models/OrderItem.dart';
 import 'package:http/http.dart' as http;
 
 class PlaceProfile extends StatefulWidget {

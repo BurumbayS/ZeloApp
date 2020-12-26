@@ -3,8 +3,8 @@ import 'Storage.dart';
 class Network {
   static Network shared = new Network();
 
-  static String host = 'https://zelodostavka.me'; //'http://192.168.0.101:8000';
-//  static String host = 'http://207.154.213.83';
+//  static String host = 'https://zelodostavka.me'; //'http://192.168.0.101:8000';
+  static String host = 'http://207.154.213.83';
   static String api = host + '/api';
 
   Map<String, String> headers() {

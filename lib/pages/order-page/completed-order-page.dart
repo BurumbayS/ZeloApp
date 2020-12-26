@@ -129,6 +129,38 @@ class CompletedOrderPageState extends State<CompletedOrderPage>  {
                   },
                 ),
               ),
+
+              Container(
+                height: 50,
+                margin: EdgeInsets.only(top: 20),
+                width: MediaQuery.of(context).size.width * 0.8,
+
+                child: FlatButton(
+                  color: Colors.white.withOpacity(0.01),
+                  textColor: Colors.redAccent,
+                  splashColor: Colors.grey[300],
+                  shape: RoundedRectangleBorder(
+                      side: BorderSide(
+                        color: Colors.redAccent,
+                        width: 2
+                      ),
+                      borderRadius: BorderRadius.circular(25.0),
+                  ),
+
+                  child: Text(
+                      'Отменить заказ',
+                      style: GoogleFonts.openSans(
+                          color: Colors.redAccent,
+                          fontSize: 22,
+                          decoration: TextDecoration.none,
+//                          fontWeight: FontWeight.bold
+                      )
+                  ),
+                  onPressed: (){
+//                    Navigator.popUntil(context, (route) => route.isFirst);
+                  },
+                ),
+              ),
             ],
           )
         )
