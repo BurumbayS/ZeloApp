@@ -22,7 +22,8 @@ Order _$OrderFromJson(Map<String, dynamic> json) {
     ..deliveryAddress = json['delivery_address'] == null
         ? null
         : Address.fromJson(json['delivery_address'] as Map<String, dynamic>)
-    ..contactPhone = json['contact_phone'] as String;
+    ..contactPhone = json['contact_phone'] as String
+    ..comment = json['comment'] as String;
 }
 
 Map<String, dynamic> _$OrderToJson(Order instance) => <String, dynamic>{
@@ -36,6 +37,7 @@ Map<String, dynamic> _$OrderToJson(Order instance) => <String, dynamic>{
       'price': instance.price,
       'delivery_address': instance.deliveryAddress,
       'contact_phone': instance.contactPhone,
+      'comment': instance.comment,
     };
 
 T _$enumDecode<T>(
