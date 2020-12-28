@@ -145,8 +145,6 @@ class OrderPageState extends State<OrderPage> {
     _order.clientID = userJson['id'];
     _order.clientName = userJson['name'];
 
-    print(jsonEncode(_order));
-
     final http.Response response = await http.post(
         Network.api + "/order/",
         headers: <String, String>{
@@ -159,9 +157,10 @@ class OrderPageState extends State<OrderPage> {
     print(json);
 
     if (json['code'] == 0) {
+      Order placedOrder = Order.fromJson(json['order']);
       Navigator.pushReplacement(context, CupertinoPageRoute(
           builder: (context) => CompletedOrderPage(
-            order: _order,
+            order: placedOrder,
           )
       ));
     }

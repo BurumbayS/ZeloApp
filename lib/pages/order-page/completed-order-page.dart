@@ -2,12 +2,12 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:ZeloApp/models/Order.dart';
-import 'package:ZeloApp/services/Storage.dart';
+import 'package:ZeloApp/services/Network.dart';
+import 'package:ZeloApp/utils/alertDialog.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:web_socket_channel/io.dart';
-import 'package:web_socket_channel/web_socket_channel.dart';
+import 'package:http/http.dart' as http;
 
 // ignore: must_be_immutable
 class CompletedOrderPage extends StatefulWidget{
@@ -26,6 +26,25 @@ class CompletedOrderPageState extends State<CompletedOrderPage>  {
   @override
   void initState() {
     super.initState();
+  }
+
+  void _cancelOrder() {
+    showDialog(context: context, builder: (_) =>
+        CustomAlertDialog.shared.dialog("Постойте", "Вы уверены, что хотите отменить заказ?", false, context, () async {
+          var id = widget.order.id;
+          var response = await http.get(Network.api + "/cancel_order/$id/");
+
+          var json = jsonDecode(response.body);
+
+          if (json['code'] == 0) {
+            showDialog(context: context, builder: (_) =>
+                CustomAlertDialog.shared.dialog("Успешно", "Ваш заказ отменен", true, context, () {
+                  Navigator.popUntil(context, (route) => route.isFirst);
+                })
+            );
+          }
+        })
+    );
   }
 
   @override
@@ -157,7 +176,7 @@ class CompletedOrderPageState extends State<CompletedOrderPage>  {
                       )
                   ),
                   onPressed: (){
-//                    Navigator.popUntil(context, (route) => route.isFirst);
+                    _cancelOrder();
                   },
                 ),
               ),
