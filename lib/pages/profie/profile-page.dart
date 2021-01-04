@@ -4,6 +4,7 @@ import 'dart:convert';
 
 import 'package:ZeloApp/models/User.dart';
 import 'package:ZeloApp/pages/profie/change-password-page.dart';
+import 'package:ZeloApp/pages/profie/my-orders-page.dart';
 import 'package:ZeloApp/services/Storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -20,7 +21,7 @@ enum ProfileSections {
 
 class ProfilePageState extends State<ProfilePage> {
 
-  var sections = [ProfileSections.HEADER, ProfileSections.CHANGE_PASS, ProfileSections.PRIVACY_POLICY, ProfileSections.LOGOUT];
+  var sections = [ProfileSections.HEADER, ProfileSections.CHANGE_PASS, ProfileSections.MY_ORDERS, ProfileSections.PRIVACY_POLICY, ProfileSections.LOGOUT];
   User user;
 
   @override
@@ -60,6 +61,9 @@ class ProfilePageState extends State<ProfilePage> {
       case ProfileSections.PRIVACY_POLICY:
         _openPrivacyPolicy();
         break;
+      case ProfileSections.MY_ORDERS:
+        _showMyOrders();
+        break;
       case ProfileSections.LOGOUT:
         _logout();
     }
@@ -81,6 +85,10 @@ class ProfilePageState extends State<ProfilePage> {
   void _logout() {
     User.logout();
     Navigator.pop(context);
+  }
+
+  void _showMyOrders() {
+    Navigator.push(context,CupertinoPageRoute(builder: (context) => MyOrdersPage()));
   }
 
   @override
