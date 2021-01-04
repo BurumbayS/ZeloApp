@@ -28,7 +28,7 @@ class MyOrdersPageState extends State<MyOrdersPage> {
             }
           }
       ),
-      backgroundColor: Colors.grey[100],
+      backgroundColor: Colors.grey[50],
     );
   }
 

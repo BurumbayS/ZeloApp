@@ -29,7 +29,22 @@ class OrderDetailsPageState extends State<OrderDetailsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text ('Lanzhou'),
+        title: RichText(
+          textAlign: TextAlign.center,
+          text: TextSpan(
+              text: "Lanzhou",
+              style: TextStyle(fontSize: 20),
+              children: <TextSpan>[
+                TextSpan(
+                  text: '\n20.12.2020',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.grey[300]
+                  ),
+                ),
+              ]
+          ),
+        ),
       ),
       body: ListView.builder(
         itemCount: sections.length + items.length,
