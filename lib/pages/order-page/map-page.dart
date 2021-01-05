@@ -9,9 +9,11 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:yandex_mapkit/yandex_mapkit.dart';
 import 'package:flutter/cupertino.dart';
-import 'delivery-address-details.dart';
+
 import 'package:permission_handler/permission_handler.dart';
 import 'package:location/location.dart' as geolocator;
+
+import 'delivery-address-details.dart';
 
 // ignore: must_be_immutable
 class MapSearchPage extends StatefulWidget{

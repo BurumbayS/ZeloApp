@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:ZeloApp/models/Place.dart';
 import 'package:ZeloApp/models/User.dart';
-import 'package:ZeloApp/pages/place-profile.dart';
+import 'package:ZeloApp/pages/place/place-profile.dart';
 import 'package:ZeloApp/pages/profie/profile-page.dart';
 import 'package:ZeloApp/services/Network.dart';
 import 'package:ZeloApp/utils/alertDialog.dart';
@@ -11,7 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 
-import 'auth/auth-page.dart';
+import '../auth/auth-page.dart';
 
 class PlacesListState extends State<PlacesList> {
 

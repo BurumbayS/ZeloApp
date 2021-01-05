@@ -10,6 +10,9 @@ Order _$OrderFromJson(Map<String, dynamic> json) {
   return Order()
     ..id = json['id'] as int
     ..placeID = json['place_id'] as int
+    ..place = json['place'] == null
+        ? null
+        : Place.fromJson(json['place'] as Map<String, dynamic>)
     ..orderStatus = _$enumDecodeNullable(_$OrderStatusEnumMap, json['status'])
     ..orderItems = (json['order_items'] as List)
         ?.map((e) =>
@@ -23,12 +26,15 @@ Order _$OrderFromJson(Map<String, dynamic> json) {
         ? null
         : Address.fromJson(json['delivery_address'] as Map<String, dynamic>)
     ..contactPhone = json['contact_phone'] as String
-    ..comment = json['comment'] as String;
+    ..comment = json['comment'] as String
+    ..date = json['date'] as String
+    ..time = json['time'] as String;
 }
 
 Map<String, dynamic> _$OrderToJson(Order instance) => <String, dynamic>{
       'id': instance.id,
       'place_id': instance.placeID,
+      'place': instance.place,
       'status': _$OrderStatusEnumMap[instance.orderStatus],
       'order_items': instance.orderItems,
       'delivery_price': instance.deliveryPrice,
@@ -38,6 +44,8 @@ Map<String, dynamic> _$OrderToJson(Order instance) => <String, dynamic>{
       'delivery_address': instance.deliveryAddress,
       'contact_phone': instance.contactPhone,
       'comment': instance.comment,
+      'date': instance.date,
+      'time': instance.time,
     };
 
 T _$enumDecode<T>(
