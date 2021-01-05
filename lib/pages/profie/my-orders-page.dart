@@ -1,8 +1,14 @@
 
+import 'dart:convert';
+
+import 'package:ZeloApp/models/Order.dart';
+import 'package:ZeloApp/models/Place.dart';
 import 'package:ZeloApp/pages/profie/order-details-page.dart';
+import 'package:ZeloApp/services/Network.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:http/http.dart' as http;
 
 class MyOrdersPage extends StatefulWidget {
   @override
@@ -12,6 +18,34 @@ class MyOrdersPage extends StatefulWidget {
 }
 
 class MyOrdersPageState extends State<MyOrdersPage> {
+
+  List<Order> _orders = new List();
+
+  @override
+  void initState() {
+    super.initState();
+
+    _loadOrders();
+  }
+
+  void _loadOrders() async {
+    String url = Network.api + '/user_orders/';
+    var response = await http.get(url, headers: Network.shared.headers());
+
+    var ordersJson = json.decode(response.body).cast<Map<String, dynamic>>();
+
+    var ordersList = new List<Order>();
+
+    ordersJson.forEach((element) {
+      var order = Order.fromJson(element);
+      ordersList.add(order);
+    });
+
+    setState(() {
+      _orders = ordersList;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold (
@@ -19,12 +53,12 @@ class MyOrdersPageState extends State<MyOrdersPage> {
         title: Text('Мои заказы'),
       ),
       body: ListView.builder(
-          itemCount: 3,
+          itemCount: _orders.length,
           itemBuilder: (context, i) {
             if (i == 0) {
               return _buildHeader();
             } else {
-              return _buildOrderCell();
+              return _buildOrderCell(_orders[i]);
             }
           }
       ),
@@ -51,10 +85,14 @@ class MyOrdersPageState extends State<MyOrdersPage> {
     );
   }
 
-  Widget _buildOrderCell() {
+  Widget _buildOrderCell(Order order) {
     return InkWell (
       onTap: () {
-        Navigator.push(context,CupertinoPageRoute(builder: (context) => OrderDetailsPage()));
+        Navigator.push(context,CupertinoPageRoute(builder: (context) =>
+            OrderDetailsPage(
+                order: order
+            )
+        ));
       },
       child: Container(
         padding: EdgeInsets.only(left: 20, right: 10, top: 10, bottom: 10),
@@ -76,7 +114,7 @@ class MyOrdersPageState extends State<MyOrdersPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(
-                    'Lanzhou',
+                    order.place.name,
                     style: GoogleFonts.openSans(
                         fontSize: 16,
                         color: Colors.black.withOpacity(0.7)
@@ -84,7 +122,7 @@ class MyOrdersPageState extends State<MyOrdersPage> {
                   ),
 
                   Text(
-                    '20.12.2020',
+                    order.formatedDate(),
                     style: GoogleFonts.openSans(
                         fontSize: 14,
                         color: Colors.grey
@@ -97,7 +135,7 @@ class MyOrdersPageState extends State<MyOrdersPage> {
             Padding (
               padding: EdgeInsets.only(right: 10),
               child: Text(
-                '1204',
+                order.total().toString(),
                 style: GoogleFonts.openSans(
                     fontSize: 18,
                     color: Colors.black.withOpacity(0.7)
