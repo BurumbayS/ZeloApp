@@ -15,7 +15,8 @@ import '../auth/auth-page.dart';
 
 class PlacesListState extends State<PlacesList> {
 
-  int _price = 400;
+  String _selectedCity = "Талдыкорган";
+  bool _citySelecting = false;
   List<Place> _places = new List();
 
   @override
@@ -64,12 +65,19 @@ class PlacesListState extends State<PlacesList> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-            'Zelo',
-            style: GoogleFonts.yellowtail(
-              fontSize: 40,
-              color: Colors.white,
-            )
+        title: InkWell(
+          onTap: () {
+            setState(() {
+              _citySelecting = !_citySelecting;
+            });
+          },
+          child: Text(
+            _selectedCity,
+            style: GoogleFonts.openSans(
+              fontSize: 20,
+              fontWeight: FontWeight.bold
+            ),
+          ),
         ),
         actions: <Widget>[
           Container(
@@ -85,7 +93,28 @@ class PlacesListState extends State<PlacesList> {
           ),
         ],
       ),
-      body: _buildList(),
+      body: Stack(
+        children: <Widget>[
+          _buildList(),
+
+          Positioned(
+            width: (_citySelecting) ? MediaQuery.of(context).size.width : 0,
+            height: (_citySelecting) ? MediaQuery.of(context).size.height : 0,
+            top: 0,
+            left: 0,
+            child: Container(
+              color: Colors.black.withOpacity(0.3),
+              alignment: Alignment.center,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  _citySelectionModalView(),
+                ],
+              )
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -219,6 +248,81 @@ class PlacesListState extends State<PlacesList> {
               blurRadius: 10,
               offset: Offset(0, 3), // changes position of shadow
             ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _citySelectionModalView() {
+    return AnimatedOpacity(
+      duration: Duration(milliseconds: 200),
+      opacity: (_citySelecting) ? 1.0 : 0,
+      child: Container(
+//        margin: EdgeInsets.only(top: 250),
+        padding: EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.5),
+              spreadRadius: 1,
+              blurRadius: 10,
+              offset: Offset(0, 3), // changes position of shadow
+            ),
+          ],
+        ),
+        child: Column(
+          children: <Widget>[
+            InkWell(
+              onTap: () {
+                setState(() {
+                  _selectedCity = "Талдыкорган";
+                  _citySelecting = false;
+                });
+              },
+              child: Container(
+                height: 50,
+                width: 200,
+                margin: EdgeInsets.only(bottom: 10),
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(5)),
+                  color: (_selectedCity == "Талдыкорган") ? Colors.blue : Colors.white,
+                ),
+                child: Text(
+                  'Талдыкорган',
+                  style: GoogleFonts.openSans(
+                      fontSize: 18,
+                      color: (_selectedCity == "Талдыкорган") ? Colors.white : Colors.blue
+                  ),
+                ),
+              ),
+            ),
+            InkWell(
+              onTap: () {
+                setState(() {
+                  _selectedCity = "Семей";
+                  _citySelecting = false;
+                });
+              },
+              child: Container(
+                height: 50,
+                width: 200,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(5)),
+                  color: (_selectedCity == "Семей") ? Colors.blue : Colors.white,
+                ),
+                child: Text(
+                  'Семей',
+                  style: GoogleFonts.openSans(
+                    fontSize: 18,
+                    color: (_selectedCity == "Семей") ? Colors.white : Colors.blue,
+                  ),
+                ),
+              ),
+            )
           ],
         ),
       ),
