@@ -48,7 +48,7 @@ class PlaceProfileState extends State<PlaceProfile>{
 
   void loadMenuItems() async {
     var placeID = _placeInfo.id;
-    String url = Network.api + '/menuItems/$placeID';
+    String url = Network.shared.api + '/menuItems/$placeID';
     var response = await http.get(url);
 
     var itemsJson = json.decode(response.body).cast<Map<String, dynamic>>();
@@ -245,7 +245,7 @@ class PlaceProfileState extends State<PlaceProfile>{
               headerData: HeaderData(
                   headerHeight: 250,
                   header: Image.network(
-                    Network.host + _placeInfo.wallpaper,
+                    Network.shared.host() + _placeInfo.wallpaper,
                     fit: BoxFit.cover,
                   ),
                   highlightHeaderAlignment: HighlightHeaderAlignment.top,
@@ -489,7 +489,7 @@ class PlaceProfileState extends State<PlaceProfile>{
                     margin: EdgeInsets.only(right: 10, top: 10, bottom: 10),
                     decoration: BoxDecoration(
                       image: DecorationImage(
-                          image: NetworkImage(Network.host + menuItem.image),
+                          image: NetworkImage(Network.shared.host() + menuItem.image),
                           fit: BoxFit.cover
                       ),
                       borderRadius: BorderRadius.all(Radius.circular(10.0)),
@@ -601,7 +601,7 @@ class PlaceProfileState extends State<PlaceProfile>{
               margin: EdgeInsets.only(right: 10, top: 10, left: 10),
               decoration: BoxDecoration(
                 image: DecorationImage(
-                    image: NetworkImage(Network.host + selectedItem.image),
+                    image: NetworkImage(Network.shared.host() + selectedItem.image),
                     fit: BoxFit.cover
                 ),
                 borderRadius: BorderRadius.all(Radius.circular(10.0)),

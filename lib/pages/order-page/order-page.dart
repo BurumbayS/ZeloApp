@@ -146,7 +146,7 @@ class OrderPageState extends State<OrderPage> {
     _order.clientName = userJson['name'];
 
     final http.Response response = await http.post(
-        Network.api + "/order/",
+        Network.shared.api + "/order/",
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },

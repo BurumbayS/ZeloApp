@@ -43,7 +43,7 @@ class AuthPageState extends State<AuthPage> {
 
   void login() async {
     var response = await http.post(
-      Network.api + "/login/",
+      Network.shared.api + "/login/",
       headers: Network.shared.headers(),
       body: jsonEncode(<String, String>{
         'email': _mailTextFieldController.text,
@@ -70,7 +70,7 @@ class AuthPageState extends State<AuthPage> {
 
   void register() async {
     var response = await http.post(
-      Network.api + "/register/",
+      Network.shared.api + "/register/",
       headers: Network.shared.headers(),
       body: jsonEncode(<String, String>{
         'email': _mailTextFieldController.text,

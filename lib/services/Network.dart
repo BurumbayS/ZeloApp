@@ -1,11 +1,42 @@
 import 'Storage.dart';
 
+enum City {
+  Semey,
+  Taldykorgan
+}
+
 class Network {
   static Network shared = new Network();
 
-//  static String host = 'https://zelodostavka.me'; //'http://192.168.0.101:8000';
-  static String host = 'http://207.154.213.83';
-  static String api = host + '/api';
+  City city;
+
+  String host_taldyk = 'https://zelodostavka.me'; //'http://192.168.0.101:8000';
+  String host_semey = "http://207.154.213.83";
+  String host_dev = 'http://207.154.213.83';
+
+  String api = "";
+
+  void setCity(City city) {
+    this.city = city;
+
+    switch (city) {
+      case City.Semey:
+        this.api = host_semey + "/api";
+        break;
+      case City.Taldykorgan:
+        this.api = host_taldyk + "/api";
+        break;
+    }
+  }
+
+  String host() {
+    switch (city) {
+      case City.Semey:
+        return host_semey;
+      case City.Taldykorgan:
+        return host_taldyk;
+    }
+  }
 
   Map<String, String> headers() {
     String token = Storage.shared.getItem("token");

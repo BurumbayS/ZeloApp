@@ -29,7 +29,7 @@ class MyOrdersPageState extends State<MyOrdersPage> {
   }
 
   void _loadOrders() async {
-    String url = Network.api + '/user_orders/';
+    String url = Network.shared.api + '/user_orders/';
     var response = await http.get(url, headers: Network.shared.headers());
 
     var ordersJson = json.decode(response.body).cast<Map<String, dynamic>>();

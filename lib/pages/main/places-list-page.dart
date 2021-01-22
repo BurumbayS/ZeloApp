@@ -5,6 +5,7 @@ import 'package:ZeloApp/models/User.dart';
 import 'package:ZeloApp/pages/place/place-profile.dart';
 import 'package:ZeloApp/pages/profie/profile-page.dart';
 import 'package:ZeloApp/services/Network.dart';
+import 'package:ZeloApp/services/Storage.dart';
 import 'package:ZeloApp/utils/alertDialog.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -15,7 +16,7 @@ import '../auth/auth-page.dart';
 
 class PlacesListState extends State<PlacesList> {
 
-  String _selectedCity = "Талдыкорган";
+  City _selectedCity;
   bool _citySelecting = false;
   List<Place> _places = new List();
 
@@ -23,11 +24,51 @@ class PlacesListState extends State<PlacesList> {
   void initState() {
     super.initState();
 
-    loadPlaces();
+    _identifyCity();
   }
 
-  void loadPlaces() async {
-    String url = Network.api + '/places/';
+  void _identifyCity() async {
+      String city = await Storage.itemBy("city");
+
+      if (city == null) {
+        _citySelecting = true;
+        return;
+      }
+
+      if (city == City.Semey.toString()) {
+        Network.shared.setCity(City.Semey);
+      }
+      if (city == City.Taldykorgan.toString()) {
+        Network.shared.setCity(City.Taldykorgan);
+      }
+
+      _loadPlaces();
+  }
+
+  void _selectCity(City city) {
+    setState(() {
+      _citySelecting = false;
+      _selectedCity = city;
+    });
+
+    Network.shared.setCity(city);
+
+    _loadPlaces();
+  }
+
+  String _selectedCityTitle() {
+    switch (_selectedCity) {
+      case City.Taldykorgan:
+        return "Талдыкорган";
+      case City.Semey:
+        return "Семей";
+    }
+
+    return "";
+  }
+
+  void _loadPlaces() async {
+    String url = Network.shared.api + '/places/';
     var response = await http.get(url);
 
     var placesJson = json.decode(response.body).cast<Map<String, dynamic>>();
@@ -72,7 +113,7 @@ class PlacesListState extends State<PlacesList> {
             });
           },
           child: Text(
-            _selectedCity,
+            _selectedCityTitle(),
             style: GoogleFonts.openSans(
               fontSize: 20,
               fontWeight: FontWeight.bold
@@ -103,14 +144,11 @@ class PlacesListState extends State<PlacesList> {
             top: 0,
             left: 0,
             child: Container(
-              color: Colors.black.withOpacity(0.3),
-              alignment: Alignment.center,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  _citySelectionModalView(),
-                ],
-              )
+                color: Colors.black.withOpacity(0.3),
+                alignment: Alignment.center,
+                child: Center (
+                  child: _citySelectionModalView(),
+                )
             ),
           ),
         ],
@@ -149,7 +187,7 @@ class PlacesListState extends State<PlacesList> {
                 height: 130,
                 width: double.infinity,
                 child: Image.network(
-                  Network.host + place.wallpaper,
+                  Network.shared.host() + place.wallpaper,
                   fit: BoxFit.fitWidth,
                 ),
               ),
@@ -259,10 +297,13 @@ class PlacesListState extends State<PlacesList> {
       duration: Duration(milliseconds: 200),
       opacity: (_citySelecting) ? 1.0 : 0,
       child: Container(
-//        margin: EdgeInsets.only(top: 250),
+        margin: EdgeInsets.only(bottom: 200, left: 30, right: 30),
+        height: 200,
+        width: double.infinity,
         padding: EdgeInsets.all(20),
         decoration: BoxDecoration(
           color: Colors.white,
+          borderRadius: BorderRadius.all(Radius.circular(10)),
           boxShadow: [
             BoxShadow(
               color: Colors.grey.withOpacity(0.5),
@@ -274,51 +315,55 @@ class PlacesListState extends State<PlacesList> {
         ),
         child: Column(
           children: <Widget>[
+            Padding(
+              padding: EdgeInsets.only(bottom: 20),
+              child: Text(
+                'Выберите ваш город',
+                style: GoogleFonts.openSans(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600
+                ),
+              ),
+            ),
             InkWell(
               onTap: () {
-                setState(() {
-                  _selectedCity = "Талдыкорган";
-                  _citySelecting = false;
-                });
+                _selectCity(City.Taldykorgan);
               },
               child: Container(
                 height: 50,
-                width: 200,
+                width: double.infinity,
                 margin: EdgeInsets.only(bottom: 10),
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.all(Radius.circular(5)),
-                  color: (_selectedCity == "Талдыкорган") ? Colors.blue : Colors.white,
+                  color: (_selectedCity == City.Taldykorgan) ? Colors.blue : Colors.white,
                 ),
                 child: Text(
                   'Талдыкорган',
                   style: GoogleFonts.openSans(
                       fontSize: 18,
-                      color: (_selectedCity == "Талдыкорган") ? Colors.white : Colors.blue
+                      color: (_selectedCity == City.Taldykorgan) ? Colors.white : Colors.blue
                   ),
                 ),
               ),
             ),
             InkWell(
               onTap: () {
-                setState(() {
-                  _selectedCity = "Семей";
-                  _citySelecting = false;
-                });
+                _selectCity(City.Semey);
               },
               child: Container(
                 height: 50,
-                width: 200,
+                width: double.infinity,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.all(Radius.circular(5)),
-                  color: (_selectedCity == "Семей") ? Colors.blue : Colors.white,
+                  color: (_selectedCity == City.Semey) ? Colors.blue : Colors.white,
                 ),
                 child: Text(
                   'Семей',
                   style: GoogleFonts.openSans(
                     fontSize: 18,
-                    color: (_selectedCity == "Семей") ? Colors.white : Colors.blue,
+                    color: (_selectedCity == City.Semey) ? Colors.white : Colors.blue,
                   ),
                 ),
               ),

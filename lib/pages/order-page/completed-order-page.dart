@@ -32,7 +32,7 @@ class CompletedOrderPageState extends State<CompletedOrderPage>  {
     showDialog(context: context, builder: (_) =>
         CustomAlertDialog.shared.dialog("Постойте", "Вы уверены, что хотите отменить заказ?", false, context, () async {
           var id = widget.order.id;
-          var response = await http.get(Network.api + "/cancel_order/$id/");
+          var response = await http.get(Network.shared.api + "/cancel_order/$id/");
 
           var json = jsonDecode(response.body);
 

@@ -67,7 +67,7 @@ class ChangePasswordPageState extends State<ChangePasswordPage> {
     };
 
     http.Response response = await http.put(
-        Network.api + "/reset_password/",
+        Network.shared.api + "/reset_password/",
         headers: Network.shared.headers(),
         body: jsonEncode(_dataToUpdate)
     );

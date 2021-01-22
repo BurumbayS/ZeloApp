@@ -55,7 +55,7 @@ class MapSearchPageState extends State<MapSearchPage>  {
   }
 
   void _loadMapApiKey() async {
-    Response response = await Dio().get(Network.api + "/mapApiKey/");
+    Response response = await Dio().get(Network.shared.api + "/mapApiKey/");
 
     if (response.data['code'] == 0) {
       _yandexMapKey = response.data['key'];
