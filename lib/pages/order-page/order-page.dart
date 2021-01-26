@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:ZeloApp/models/Address.dart';
 import 'package:ZeloApp/pages/order-page/order-comment-page.dart';
 import 'package:ZeloApp/services/Storage.dart';
+import 'package:ZeloApp/utils/alertDialog.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:google_fonts/google_fonts.dart';
@@ -138,18 +139,13 @@ class OrderPageState extends State<OrderPage> {
   }
 
   void _placeOrder() async {
-    var userData = await Storage.itemBy('user_data');
-    var userJson = jsonDecode(userData);
+    if (!_orderCompleted()) { return; }
 
     _order.placeID = widget.place_id;
-    _order.clientID = userJson['id'];
-    _order.clientName = userJson['name'];
 
     final http.Response response = await http.post(
         Network.shared.api + "/order/",
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
+        headers: Network.shared.headers(),
         body: jsonEncode(_order)
     );
 
@@ -163,6 +159,10 @@ class OrderPageState extends State<OrderPage> {
             order: placedOrder,
           )
       ));
+    } else {
+      showDialog(context: context, builder: (_) =>  CustomAlertDialog.shared.dialog("Простите", json["error"], true, context, () {
+        Navigator.pop(context);
+      }));
     }
 
   }
