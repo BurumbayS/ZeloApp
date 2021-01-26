@@ -10,8 +10,8 @@ class Network {
 
   City city;
 
-  String host_taldyk = 'https://zelodostavka.me'; //'http://192.168.0.101:8000';
-  String host_semey = "http://207.154.213.83";
+  String host_taldyk = 'http://207.154.213.83';//'https://zelodostavka.me';
+  String host_semey = 'http://167.71.55.136:8000';//"http://207.154.213.83";
   String host_dev = 'http://207.154.213.83';
 
   String api = "";

@@ -31,15 +31,23 @@ class PlacesListState extends State<PlacesList> {
       String city = await Storage.itemBy("city");
 
       if (city == null) {
-        _citySelecting = true;
+        setState(() {
+          _citySelecting = true;
+        });
         return;
       }
 
       if (city == City.Semey.toString()) {
         Network.shared.setCity(City.Semey);
+        setState(() {
+          _selectedCity = City.Semey;
+        });
       }
       if (city == City.Taldykorgan.toString()) {
         Network.shared.setCity(City.Taldykorgan);
+        setState(() {
+          _selectedCity = City.Taldykorgan;
+        });
       }
 
       _loadPlaces();
@@ -52,6 +60,7 @@ class PlacesListState extends State<PlacesList> {
     });
 
     Network.shared.setCity(city);
+    Storage.setItem('city', city.toString());
 
     _loadPlaces();
   }
@@ -68,6 +77,10 @@ class PlacesListState extends State<PlacesList> {
   }
 
   void _loadPlaces() async {
+    setState(() {
+      _places = [];
+    });
+
     String url = Network.shared.api + '/places/';
     var response = await http.get(url);
 
