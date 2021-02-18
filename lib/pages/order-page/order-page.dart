@@ -2,13 +2,12 @@ import 'dart:convert';
 
 import 'package:ZeloApp/models/Address.dart';
 import 'package:ZeloApp/pages/order-page/order-comment-page.dart';
-import 'package:ZeloApp/services/Storage.dart';
 import 'package:ZeloApp/utils/alertDialog.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:web_socket_channel/io.dart';
+import 'package:intl/intl.dart';
 import 'completed-order-page.dart';
 import 'map-page.dart';
 import 'package:dotted_line/dotted_line.dart';
@@ -41,20 +40,6 @@ extension SectionTypeExtension on SectionType {
     }
   }
 
-//  int get rowCount {
-//    switch (this) {
-//      case SectionType.order:
-//        return 2;
-//      case SectionType.address:
-//        return 1;
-//      case SectionType.contactNumber:
-//        return 1;
-//      case SectionType.comment:
-//        return 1;
-//      case SectionType.payment:
-//        return 1;
-//    }
-//  }
 }
 
 class OrderPage extends StatefulWidget{
@@ -73,16 +58,33 @@ class OrderPage extends StatefulWidget{
 }
 
 class OrderPageState extends State<OrderPage> {
-//  int _section = 0;
-//  int _row = -1;
+
   Order _order = new Order();
 
+  double confirmOrderBtnBottomMargin = 50;
+
   List<SectionType> _sections = [SectionType.order, SectionType.address, SectionType.contactNumber, SectionType.comment, SectionType.payment];
-//  List<OrderItem> _orderItems;
+
   final GlobalKey<AnimatedListState> orderListKey = GlobalKey<AnimatedListState>();
 
   final _phoneTextFieldController = TextEditingController();
   FocusNode _focus = new FocusNode();
+
+  initState() {
+      _focus.addListener(() async {
+        if (!_focus.hasFocus) {
+          await Future.delayed(Duration(milliseconds: 100));
+
+          setState(() {
+            confirmOrderBtnBottomMargin = 50;
+          });
+        } else {
+          setState(() {
+            confirmOrderBtnBottomMargin = -50;
+          });
+        }
+      });
+  }
 
   bool _orderCompleted() {
     return (_order.deliveryAddress.firstAddress != '' && _order.contactPhone.length == 11);
@@ -331,7 +333,7 @@ class OrderPageState extends State<OrderPage> {
             ),
 
             Positioned (
-              bottom: (_focus.hasFocus) ? -50 : 50,
+              bottom: confirmOrderBtnBottomMargin,
               left: MediaQuery.of(context).size.width * 0.1,
 
               child: Container(
