@@ -6,6 +6,7 @@ import 'package:ZeloApp/services/Network.dart';
 import 'package:ZeloApp/pages/order-page/order-page.dart';
 import 'package:ZeloApp/services/Storage.dart';
 import 'package:ZeloApp/utils/alertDialog.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:stretchy_header/stretchy_header.dart';
@@ -244,8 +245,10 @@ class PlaceProfileState extends State<PlaceProfile>{
             child: StretchyHeader.listViewBuilder(
               headerData: HeaderData(
                   headerHeight: 250,
-                  header: Image.network(
-                    Network.shared.host() + _placeInfo.wallpaper,
+                  header: CachedNetworkImage(
+                    imageUrl: Network.shared.host() + _placeInfo.wallpaper,
+                    placeholder: (context, url) => Image.asset('assets/images/place_placeholder.png', fit: BoxFit.cover,),
+                    errorWidget: (context, url, error) => Icon(Icons.error),
                     fit: BoxFit.cover,
                   ),
                   highlightHeaderAlignment: HighlightHeaderAlignment.top,
@@ -487,15 +490,17 @@ class PlaceProfileState extends State<PlaceProfile>{
                     width: 100,
                     height: 80,
                     margin: EdgeInsets.only(right: 10, top: 10, bottom: 10),
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                          image: NetworkImage(Network.shared.host() + menuItem.image),
-                          fit: BoxFit.cover
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(8.0),
+                      child: CachedNetworkImage(
+                        imageUrl: Network.shared.host() + menuItem.image,
+                        placeholder: (context, url) => Image.asset('assets/images/food-placeholder.png'),
+                        errorWidget: (context, url, error) => Icon(Icons.error),
+                        fit: BoxFit.cover,
                       ),
-                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
                     ),
-
                   ),
+
                 ],
               ),
             ),

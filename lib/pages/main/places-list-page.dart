@@ -7,6 +7,7 @@ import 'package:ZeloApp/pages/profie/profile-page.dart';
 import 'package:ZeloApp/services/Network.dart';
 import 'package:ZeloApp/services/Storage.dart';
 import 'package:ZeloApp/utils/alertDialog.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -199,10 +200,21 @@ class PlacesListState extends State<PlacesList> {
               child: SizedBox (
                 height: 130,
                 width: double.infinity,
-                child: Image.network(
-                  Network.shared.host() + place.wallpaper,
-                  fit: BoxFit.fitWidth,
-                ),
+//                child: Image.network(
+//                  Network.shared.host() + place.wallpaper,
+//                  fit: BoxFit.fitWidth,
+//                ),
+//                  child: FadeInImage.assetNetwork(
+//                    placeholder: 'assets/images/plus.png',
+//                    image: Network.shared.host() + place.wallpaper,
+//                    fit: BoxFit.cover,
+//                  ),
+                  child: CachedNetworkImage(
+                    imageUrl: Network.shared.host() + place.wallpaper,
+                    placeholder: (context, url) => Image.asset('assets/images/place_placeholder.png', fit: BoxFit.cover,),
+                    errorWidget: (context, url, error) => Icon(Icons.error),
+                    fit: BoxFit.cover,
+                  ),
               ),
             ),
 
@@ -221,11 +233,13 @@ class PlacesListState extends State<PlacesList> {
                           margin: EdgeInsets.only(left: 10, top: 10),
                           child: Text(
                               place.name,
-                              style: GoogleFonts.capriola(
+                              maxLines: 1,
+                              style: GoogleFonts.openSans(
                                   fontSize: 18,
                                   color: Colors.grey[800],
-                                  fontWeight: FontWeight.w500
-                              )
+                                  fontWeight: FontWeight.w700
+                              ),
+                              overflow: TextOverflow.ellipsis,
                           ),
                         ),
 
@@ -246,7 +260,7 @@ class PlacesListState extends State<PlacesList> {
                   ),
 
                   Container(
-                      margin: EdgeInsets.only(right: 10, top: 7),
+                      margin: EdgeInsets.only(right: 10, top: 7, left: 10),
 //                  height: 40,
                       padding: EdgeInsets.only(left: 10, top: 5, right: 10, bottom: 5),
                       decoration: BoxDecoration(
