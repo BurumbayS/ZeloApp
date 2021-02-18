@@ -70,7 +70,7 @@ class PlaceProfileState extends State<PlaceProfile>{
       _categorizedMenuItems[category] = new List();
     }
 
-    for (var item in menuItems) {
+    for (MenuItem item in menuItems) {
       var category = item.category;
       _categorizedMenuItems[category].add(item);
     }
@@ -368,7 +368,7 @@ class PlaceProfileState extends State<PlaceProfile>{
         children: <Widget>[
           Text(
               _placeInfo.name,
-              style: GoogleFonts.capriola(
+              style: GoogleFonts.openSans(
                 color: Colors.black,
                 fontSize: 24,
                 decoration: TextDecoration.none,
@@ -380,7 +380,7 @@ class PlaceProfileState extends State<PlaceProfile>{
             padding: EdgeInsets.only(top: 5, bottom: 5),
             child: Text(
                 _placeInfo.description,
-                style: GoogleFonts.capriola(
+                style: GoogleFonts.openSans(
                   color: Colors.grey[500],
                   fontSize: 15,
                   decoration: TextDecoration.none,
@@ -461,15 +461,16 @@ class PlaceProfileState extends State<PlaceProfile>{
                           Text(
                             menuItem.name,
                             maxLines: 1,
-                            style: GoogleFonts.capriola(
+                            style: GoogleFonts.openSans(
                                 fontSize: 15,
-                                fontWeight: FontWeight.w600,
+                                fontWeight: FontWeight.w700,
                                 color: Colors.black
                             ),
                           ),
 
                           Text(
                             menuItem.description,
+                            overflow: TextOverflow.ellipsis,
                             maxLines: 2,
                           ),
 
@@ -489,11 +490,11 @@ class PlaceProfileState extends State<PlaceProfile>{
                   Container(
                     width: 100,
                     height: 80,
-                    margin: EdgeInsets.only(right: 10, top: 10, bottom: 10),
+                    margin: EdgeInsets.only(right: 10, top: 10, bottom: 10, left: 10),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(8.0),
                       child: CachedNetworkImage(
-                        imageUrl: Network.shared.host() + menuItem.image,
+                        imageUrl: (menuItem.image != null) ? Network.shared.host() + menuItem.image : "",
                         placeholder: (context, url) => Image.asset('assets/images/food-placeholder.png'),
                         errorWidget: (context, url, error) => Icon(Icons.error),
                         fit: BoxFit.cover,
@@ -604,12 +605,14 @@ class PlaceProfileState extends State<PlaceProfile>{
               width: double.infinity,
               height: 200,
               margin: EdgeInsets.only(right: 10, top: 10, left: 10),
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                    image: NetworkImage(Network.shared.host() + selectedItem.image),
-                    fit: BoxFit.cover
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(8.0),
+                child: CachedNetworkImage(
+                  imageUrl: (selectedItem.image != null) ? Network.shared.host() + selectedItem.image : "",
+                  placeholder: (context, url) => Image.asset('assets/images/food-placeholder.png'),
+                  errorWidget: (context, url, error) => Icon(Icons.error),
+                  fit: BoxFit.cover,
                 ),
-                borderRadius: BorderRadius.all(Radius.circular(10.0)),
               ),
 
             ),

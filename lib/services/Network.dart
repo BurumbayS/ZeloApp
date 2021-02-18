@@ -11,7 +11,7 @@ class Network {
   City city;
 
   String host_taldyk = 'http://64.227.116.41';//'https://zelodostavka.me';
-  String host_semey = 'http://46.101.121.193';
+  String host_semey = 'http://167.71.53.8'; //'http://46.101.121.193';
   String host_dev = 'http://64.227.116.41';
   String host_taraz = 'http://167.71.53.8';
 

@@ -15,7 +15,11 @@ class MenuItem {
   String image;
   bool stopped;
 
-  MenuItem(this.id, this.name, this.description, this.price, this.placeID, this.image, this.stopped);
+  MenuItem(this.id, this.name, this.description, this.price, this.placeID, this.image, this.stopped) {
+    if (this.description.contains(r'\n')) {
+      this.description = this.description.replaceAll(r'\n', '\n');
+    }
+  }
 
   factory MenuItem.fromJson(Map<String, dynamic> json) => _$MenuItemFromJson(json);
 

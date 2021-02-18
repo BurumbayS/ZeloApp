@@ -200,17 +200,8 @@ class PlacesListState extends State<PlacesList> {
               child: SizedBox (
                 height: 130,
                 width: double.infinity,
-//                child: Image.network(
-//                  Network.shared.host() + place.wallpaper,
-//                  fit: BoxFit.fitWidth,
-//                ),
-//                  child: FadeInImage.assetNetwork(
-//                    placeholder: 'assets/images/plus.png',
-//                    image: Network.shared.host() + place.wallpaper,
-//                    fit: BoxFit.cover,
-//                  ),
                   child: CachedNetworkImage(
-                    imageUrl: Network.shared.host() + place.wallpaper,
+                    imageUrl: (place.wallpaper != null) ? Network.shared.host() + place.wallpaper : "",
                     placeholder: (context, url) => Image.asset('assets/images/place_placeholder.png', fit: BoxFit.cover,),
                     errorWidget: (context, url, error) => Icon(Icons.error),
                     fit: BoxFit.cover,
