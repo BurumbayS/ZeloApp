@@ -198,7 +198,7 @@ class PlaceProfileState extends State<PlaceProfile>{
     bool _isAuthenticated = await isAuthenticated();
 
     if (!_isAuthenticated) {
-      showDialog(context: context, builder: (_) => CustomAlertDialog.shared.dialog("Хотите зарегестрироваться?\n", "Для заказа блюда вам необходимо зарегестрироваться", false, context, () {
+      showDialog(context: context, builder: (_) => CustomAlertDialog.shared.dialog("Хотите зарегистрироваться?\n", "Для заказа блюда вам необходимо зарегистрироваться", false, context, () {
           Navigator.pop(context);
           Navigator.of(context).push(
               CupertinoPageRoute(

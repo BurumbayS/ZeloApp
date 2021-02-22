@@ -71,7 +71,7 @@ class PlacesListState extends State<PlacesList> {
       case City.Taldykorgan:
         return "Талдыкорган";
       case City.Semey:
-        return "Семей";
+        return "Тараз";
     }
 
     return "";
@@ -105,7 +105,7 @@ class PlacesListState extends State<PlacesList> {
     if (_isAuthenticated) {
       Navigator.push(context,CupertinoPageRoute(builder: (context) => ProfilePage()));
     } else {
-      showDialog(context: context, builder: (_) => CustomAlertDialog.shared.dialog("Хотите зарегестрироваться?\n", "Для заказа блюда вам необходимо зарегестрироваться", false, context, () {
+      showDialog(context: context, builder: (_) => CustomAlertDialog.shared.dialog("Хотите зарегистрироваться?\n", "Для заказа блюда вам необходимо зарегистрироваться", false, context, () {
         Navigator.of(context).push(
             MaterialPageRoute(
                 fullscreenDialog: true,
@@ -378,7 +378,7 @@ class PlacesListState extends State<PlacesList> {
                   color: (_selectedCity == City.Semey) ? Colors.blue : Colors.white,
                 ),
                 child: Text(
-                  'Семей',
+                  'Тараз',
                   style: GoogleFonts.openSans(
                     fontSize: 18,
                     color: (_selectedCity == City.Semey) ? Colors.white : Colors.blue,

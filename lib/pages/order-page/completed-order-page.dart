@@ -85,7 +85,7 @@ class CompletedOrderPageState extends State<CompletedOrderPage>  {
                 ),
               ),
               Text(
-                  'Ваш заказ принят и уже готовиться',
+                  'Ваш заказ принят и уже готовится',
                 textAlign: TextAlign.center,
                 style: GoogleFonts.openSans(
                   fontSize: 18
