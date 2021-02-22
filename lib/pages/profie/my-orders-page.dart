@@ -33,6 +33,7 @@ class MyOrdersPageState extends State<MyOrdersPage> {
     var response = await http.get(url, headers: Network.shared.headers());
 
     var ordersJson = json.decode(response.body).cast<Map<String, dynamic>>();
+    print(ordersJson);
 
     var ordersList = new List<Order>();
 
@@ -53,12 +54,12 @@ class MyOrdersPageState extends State<MyOrdersPage> {
         title: Text('Мои заказы'),
       ),
       body: ListView.builder(
-          itemCount: _orders.length,
+          itemCount: _orders.length + 1,
           itemBuilder: (context, i) {
             if (i == 0) {
               return _buildHeader();
             } else {
-              return _buildOrderCell(_orders[i]);
+              return _buildOrderCell(_orders[i-1]);
             }
           }
       ),
