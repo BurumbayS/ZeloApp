@@ -494,7 +494,7 @@ class PlaceProfileState extends State<PlaceProfile>{
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(8.0),
                       child: CachedNetworkImage(
-                        imageUrl: (menuItem.image != null) ? Network.shared.host() + menuItem.image : "",
+                        imageUrl: (menuItem.image != null) ? Network.shared.host() + menuItem.image : "http://receptimari.com/wp-content/themes/neptune-by-osetin/assets/img/placeholder.jpg",
                         placeholder: (context, url) => Image.asset('assets/images/food-placeholder.png'),
                         errorWidget: (context, url, error) => Icon(Icons.error),
                         fit: BoxFit.cover,
@@ -608,10 +608,10 @@ class PlaceProfileState extends State<PlaceProfile>{
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(8.0),
                 child: CachedNetworkImage(
-                  imageUrl: (selectedItem.image != null) ? Network.shared.host() + selectedItem.image : "",
+                  imageUrl: (selectedItem.image != null) ? Network.shared.host() + selectedItem.image : "http://receptimari.com/wp-content/themes/neptune-by-osetin/assets/img/placeholder.jpg",
                   placeholder: (context, url) => Image.asset('assets/images/food-placeholder.png'),
                   errorWidget: (context, url, error) => Icon(Icons.error),
-                  fit: BoxFit.cover,
+                  fit: BoxFit.fitWidth,
                 ),
               ),
 

@@ -64,12 +64,15 @@ class CompletedOrderPageState extends State<CompletedOrderPage>  {
           padding: EdgeInsets.all(20),
           child: Column (
             children: <Widget>[
-              Container(
-                padding: EdgeInsets.all(30),
-                child: Image(
-                  image: AssetImage('assets/images/courier.png'),
+              Expanded(
+                child: Container(
+                  padding: EdgeInsets.all(30),
+                  child: Image(
+                    image: AssetImage('assets/images/courier.png'),
+                  ),
                 ),
               ),
+
               Padding(
                 padding: EdgeInsets.only(bottom: 10),
                 child: Text(
@@ -151,7 +154,7 @@ class CompletedOrderPageState extends State<CompletedOrderPage>  {
 
               Container(
                 height: 50,
-                margin: EdgeInsets.only(top: 20),
+                margin: EdgeInsets.only(top: 20, bottom: 50),
                 width: MediaQuery.of(context).size.width * 0.8,
 
                 child: FlatButton(
