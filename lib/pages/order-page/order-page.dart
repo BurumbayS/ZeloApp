@@ -4,6 +4,7 @@ import 'package:ZeloApp/models/Address.dart';
 import 'package:ZeloApp/pages/order-page/order-comment-page.dart';
 import 'package:ZeloApp/utils/alertDialog.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:http/http.dart' as http;
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/cupertino.dart';
@@ -22,6 +23,7 @@ enum SectionType {
   address,
   contactNumber,
   comment,
+  promocode,
   payment
 }
 extension SectionTypeExtension on SectionType {
@@ -35,6 +37,8 @@ extension SectionTypeExtension on SectionType {
         return "Контактный номер";
       case SectionType.comment:
         return "Комментарий";
+      case SectionType.promocode:
+        return "Промокод";
       case SectionType.payment:
         return "К оплате";
     }
@@ -63,16 +67,33 @@ class OrderPageState extends State<OrderPage> {
 
   double confirmOrderBtnBottomMargin = 50;
 
-  List<SectionType> _sections = [SectionType.order, SectionType.address, SectionType.contactNumber, SectionType.comment, SectionType.payment];
+  bool _loading = false;
+
+  List<SectionType> _sections = [SectionType.order, SectionType.address, SectionType.contactNumber, SectionType.comment, SectionType.promocode, SectionType.payment];
 
   final GlobalKey<AnimatedListState> orderListKey = GlobalKey<AnimatedListState>();
 
-  final _phoneTextFieldController = TextEditingController();
-  FocusNode _focus = new FocusNode();
+//  final _phoneTextFieldController = TextEditingController();
+  FocusNode _focusOnPhone = new FocusNode();
+  FocusNode _focusOnPromoCode = new FocusNode();
 
   initState() {
-      _focus.addListener(() async {
-        if (!_focus.hasFocus) {
+      _focusOnPhone.addListener(() async {
+        if (!_focusOnPhone.hasFocus) {
+          await Future.delayed(Duration(milliseconds: 100));
+
+          setState(() {
+            confirmOrderBtnBottomMargin = 50;
+          });
+        } else {
+          setState(() {
+            confirmOrderBtnBottomMargin = -50;
+          });
+        }
+      });
+
+      _focusOnPromoCode.addListener(() async {
+        if (!_focusOnPromoCode.hasFocus) {
           await Future.delayed(Duration(milliseconds: 100));
 
           setState(() {
@@ -143,6 +164,10 @@ class OrderPageState extends State<OrderPage> {
   void _placeOrder() async {
     if (!_orderCompleted()) { return; }
 
+    setState(() {
+      _loading = true;
+    });
+
     _order.placeID = widget.place_id;
 
     final http.Response response = await http.post(
@@ -150,6 +175,10 @@ class OrderPageState extends State<OrderPage> {
         headers: Network.shared.headers(),
         body: jsonEncode(_order)
     );
+
+    setState(() {
+      _loading = true;
+    });
 
     var json = jsonDecode(response.body);
     print(json);
@@ -167,6 +196,10 @@ class OrderPageState extends State<OrderPage> {
       }));
     }
 
+  }
+
+  void _activatePromoCode() async {
+    
   }
 
   void _calculateDeliveryPrice(int distance) {
@@ -281,6 +314,8 @@ class OrderPageState extends State<OrderPage> {
             return _contactNumberItem();
           case SectionType.comment:
             return _commentItem();
+          case SectionType.promocode:
+            return _promocodeItem();
           case SectionType.payment:
             return _paymentItem();
           default:
@@ -309,71 +344,105 @@ class OrderPageState extends State<OrderPage> {
         ),
       ),
 
-      body: GestureDetector(
-        onTap: () {
-          FocusScope.of(context).unfocus();
-        },
-        child: Stack (
-          children: <Widget>[
-            AnimatedList(
-                key: orderListKey,
-                initialItemCount: _itemsCount(),
-                padding: const EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 120),
-                itemBuilder: (context, i, animation) {
-                  if (i <= _order.orderItems.length) {
-                    if (i == 0) {
-                      return _buildListHeader(SectionType.order.title);
-                    } else {
-                      return _orderItem(context, _order.orderItems[i-1], animation);
-                    }
-                  } else {
-                    return _itemAtIndex(i);
-                  }
-                }
-            ),
-
-            Positioned (
-              bottom: confirmOrderBtnBottomMargin,
-              left: MediaQuery.of(context).size.width * 0.1,
-
-              child: Container(
-                height: 50,
-                width: MediaQuery.of(context).size.width * 0.8,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(25.0),
-                    boxShadow: [BoxShadow(
-                      color: Colors.grey.withOpacity(0.5),
-                      spreadRadius: 1,
-                      blurRadius: 10,
-                      offset: Offset(0, 3),
-                    ),]
-                ),
-
-                child: FlatButton(
-                  color: (_orderCompleted()) ? Colors.blue[400] : Colors.grey,
-                  textColor: Colors.white,
-                  splashColor: (_orderCompleted()) ? Colors.blue[700] : Colors.grey[0],
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(25.0)
+      body: Stack (
+        children: <Widget>[
+          GestureDetector(
+              onTap: () {
+                FocusScope.of(context).unfocus();
+              },
+              child: Stack (
+                children: <Widget>[
+                  AnimatedList(
+                      key: orderListKey,
+                      initialItemCount: _itemsCount(),
+                      padding: const EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 120),
+                      itemBuilder: (context, i, animation) {
+                        if (i <= _order.orderItems.length) {
+                          if (i == 0) {
+                            return _buildListHeader(SectionType.order.title);
+                          } else {
+                            return _orderItem(context, _order.orderItems[i-1], animation);
+                          }
+                        } else {
+                          return _itemAtIndex(i);
+                        }
+                      }
                   ),
 
-                  child: Text(
-                      'Оформить заказ',
-                      style: GoogleFonts.openSans(
-                          color: (_orderCompleted()) ? Colors.white : Colors.grey[300],
-                          fontSize: 22,
-                          decoration: TextDecoration.none,
-                          fontWeight: FontWeight.bold
-                      )
+                  Positioned (
+                    bottom: confirmOrderBtnBottomMargin,
+                    left: MediaQuery.of(context).size.width * 0.1,
+
+                    child: Container(
+                      height: 50,
+                      width: MediaQuery.of(context).size.width * 0.8,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(25.0),
+                          boxShadow: [BoxShadow(
+                            color: Colors.grey.withOpacity(0.5),
+                            spreadRadius: 1,
+                            blurRadius: 10,
+                            offset: Offset(0, 3),
+                          ),]
+                      ),
+
+                      child: FlatButton(
+                        color: (_orderCompleted()) ? Colors.blue[400] : Colors.grey,
+                        textColor: Colors.white,
+                        splashColor: (_orderCompleted()) ? Colors.blue[700] : Colors.grey[0],
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(25.0)
+                        ),
+
+                        child: Text(
+                            'Оформить заказ',
+                            style: GoogleFonts.openSans(
+                                color: (_orderCompleted()) ? Colors.white : Colors.grey[300],
+                                fontSize: 22,
+                                decoration: TextDecoration.none,
+                                fontWeight: FontWeight.bold
+                            )
+                        ),
+                        onPressed: (){
+                          _placeOrder();
+                        },
+                      ),
+                    ),
+                  )
+                ],
+              )
+          ),
+
+          (_loading) ? Positioned(
+            left: 0,
+            top: 0,
+            child: Container(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height ,
+              color: Colors.black.withOpacity(0.05),
+              child: Center (
+                child: Container(
+                  width: 100,
+                  height: 100,
+                  margin: EdgeInsets.only(bottom: 150),
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(25.0),
+                      boxShadow: [BoxShadow(
+                        color: Colors.grey.withOpacity(0.5),
+                        spreadRadius: 1,
+                        blurRadius: 10,
+                        offset: Offset(0, 3),
+                      ),]
                   ),
-                  onPressed: (){
-                    _placeOrder();
-                  },
+                  child: SpinKitFadingCircle(
+                    color: Colors.grey
+                  ),
                 ),
               ),
             )
-          ],
-        )
+          ) : Container()
+        ],
       )
     );
   }
@@ -565,8 +634,8 @@ class OrderPageState extends State<OrderPage> {
         Padding (
           padding: EdgeInsets.only(left: 16),
           child: TextFormField(
-            controller: _phoneTextFieldController,
-            focusNode: _focus,
+//            controller: _phoneTextFieldController,
+            focusNode: _focusOnPhone,
             keyboardType: TextInputType.number,
             onChanged: (number) {
                 setState(() {
@@ -623,6 +692,37 @@ class OrderPageState extends State<OrderPage> {
           Divider()
         ],
       ),
+    );
+  }
+
+  Widget _promocodeItem() {
+    return Column (
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Padding (
+          padding: EdgeInsets.only(left: 16),
+          child: TextFormField(
+//            controller: _phoneTextFieldController,
+            focusNode: _focusOnPromoCode,
+            onFieldSubmitted: (text)  async {
+              _activatePromoCode();
+            },
+            textCapitalization: TextCapitalization.characters,
+            decoration: InputDecoration(
+                border: InputBorder.none,
+                hintText: 'Введите промокод',
+                hintStyle: GoogleFonts.openSans(
+                    color: Colors.grey[500]
+                )
+            ),
+            style: GoogleFonts.openSans(
+                fontSize: 18
+            ),
+          ),
+        ),
+
+        Divider()
+      ],
     );
   }
 

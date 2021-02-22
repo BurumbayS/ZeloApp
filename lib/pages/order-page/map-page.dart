@@ -239,9 +239,7 @@ class MapSearchPageState extends State<MapSearchPage>  {
                           width: 20,
                           margin: EdgeInsets.only(right: 10),
                           child: Center (
-                            child: SpinKitRing(
-                                color: (_loading) ? Colors.grey[300] : Colors.white
-                            ),
+                            child: (_loading) ? CircularProgressIndicator() : Container(),
                           )
                         )
 
