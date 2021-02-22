@@ -50,6 +50,12 @@ class PlacesListState extends State<PlacesList> {
           _selectedCity = City.Taldykorgan;
         });
       }
+      if (city == City.Taraz.toString()) {
+        Network.shared.setCity(City.Taraz);
+        setState(() {
+          _selectedCity = City.Taraz;
+        });
+      }
 
       _loadPlaces();
   }
@@ -71,6 +77,8 @@ class PlacesListState extends State<PlacesList> {
       case City.Taldykorgan:
         return "Талдыкорган";
       case City.Semey:
+        return "Семей";
+      case City.Taraz:
         return "Тараз";
     }
 
@@ -316,7 +324,7 @@ class PlacesListState extends State<PlacesList> {
       opacity: (_citySelecting) ? 1.0 : 0,
       child: Container(
         margin: EdgeInsets.only(bottom: 200, left: 30, right: 30),
-        height: 200,
+        height: 260,
         width: double.infinity,
         padding: EdgeInsets.all(20),
         decoration: BoxDecoration(
@@ -378,14 +386,36 @@ class PlacesListState extends State<PlacesList> {
                   color: (_selectedCity == City.Semey) ? Colors.blue : Colors.white,
                 ),
                 child: Text(
-                  'Тараз',
+                  'Семей',
                   style: GoogleFonts.openSans(
                     fontSize: 18,
                     color: (_selectedCity == City.Semey) ? Colors.white : Colors.blue,
                   ),
                 ),
               ),
-            )
+            ),
+            InkWell(
+              onTap: () {
+                _selectCity(City.Taraz);
+              },
+              child: Container(
+                height: 50,
+                width: double.infinity,
+                margin: EdgeInsets.only(bottom: 10),
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(5)),
+                  color: (_selectedCity == City.Taraz) ? Colors.blue : Colors.white,
+                ),
+                child: Text(
+                  'Тараз',
+                  style: GoogleFonts.openSans(
+                      fontSize: 18,
+                      color: (_selectedCity == City.Taraz) ? Colors.white : Colors.blue
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
       ),

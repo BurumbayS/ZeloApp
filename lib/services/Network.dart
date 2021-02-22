@@ -2,7 +2,8 @@ import 'Storage.dart';
 
 enum City {
   Semey,
-  Taldykorgan
+  Taldykorgan,
+  Taraz
 }
 
 class Network {
@@ -11,7 +12,7 @@ class Network {
   City city;
 
   String host_taldyk = 'http://64.227.116.41';//'https://zelodostavka.me';
-  String host_semey = 'http://167.71.53.8'; //'http://46.101.121.193';
+  String host_semey = 'http://46.101.121.193';
   String host_dev = 'http://64.227.116.41';
   String host_taraz = 'http://167.71.53.8';
 
@@ -27,6 +28,9 @@ class Network {
       case City.Taldykorgan:
         this.api = host_taldyk + "/api";
         break;
+      case City.Taraz:
+        this.api = host_taraz + "/api";
+        break;
     }
   }
 
@@ -36,6 +40,8 @@ class Network {
         return host_semey;
       case City.Taldykorgan:
         return host_taldyk;
+      case City.Taraz:
+        return host_taraz;
     }
   }
 
