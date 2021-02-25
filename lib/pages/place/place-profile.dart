@@ -475,10 +475,11 @@ class PlaceProfileState extends State<PlaceProfile>{
                           ),
 
                           Text(
-                            menuItem.price.toString() + ' KZT',
-                            style: GoogleFonts.capriola(
+                            menuItem.price.toString(),
+                            style: GoogleFonts.openSans(
                                 color: Colors.blue[300],
-                                fontSize: 15
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold
                             ),
                           )
                         ],
