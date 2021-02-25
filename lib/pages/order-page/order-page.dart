@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:ZeloApp/models/Address.dart';
+import 'package:ZeloApp/models/PromoCode.dart';
 import 'package:ZeloApp/pages/order-page/order-comment-page.dart';
 import 'package:ZeloApp/utils/alertDialog.dart';
 import 'package:flutter/material.dart';
@@ -64,6 +65,7 @@ class OrderPage extends StatefulWidget{
 class OrderPageState extends State<OrderPage> {
 
   Order _order = new Order();
+  PromoCode _promoCode;
 
   double confirmOrderBtnBottomMargin = 50;
 
@@ -79,7 +81,7 @@ class OrderPageState extends State<OrderPage> {
 
   initState() {
       _focusOnPhone.addListener(() async {
-        if (!_focusOnPhone.hasFocus) {
+        if (!_focusOnPhone.hasFocus && !_focusOnPromoCode.hasFocus) {
           await Future.delayed(Duration(milliseconds: 100));
 
           setState(() {
@@ -93,7 +95,7 @@ class OrderPageState extends State<OrderPage> {
       });
 
       _focusOnPromoCode.addListener(() async {
-        if (!_focusOnPromoCode.hasFocus) {
+        if (!_focusOnPromoCode.hasFocus && !_focusOnPhone.hasFocus) {
           await Future.delayed(Duration(milliseconds: 100));
 
           setState(() {
@@ -140,7 +142,9 @@ class OrderPageState extends State<OrderPage> {
   void _decreaseOrderCount(OrderItem item) {
     setState(() {
       if (item.count == 1) {
-        showDialog(context: context, builder: (_) => (Platform.isIOS) ? iosAlertDialog(item) : androidAlertDialog(item));
+        showDialog(context: context, builder: (_) =>  CustomAlertDialog.shared.dialog("Постойте!", 'Вы точно хотите убрать блюдо из заказа?', false, context, () {
+          _removeOrderItem(item);
+        }));
       } else {
         item.count--;
       }
@@ -198,8 +202,67 @@ class OrderPageState extends State<OrderPage> {
 
   }
 
-  void _activatePromoCode() async {
-    
+  void _activatePromoCode(String code) async {
+    setState(() {
+      _loading = true;
+    });
+
+    var requestJson = { "promoCode" : code };
+
+    final http.Response response = await http.post(
+        Network.shared.api + "/activatePromoCode/",
+        headers: Network.shared.headers(),
+        body: jsonEncode(requestJson)
+    );
+
+    setState(() {
+      _loading = false;
+    });
+
+    var responseJson = jsonDecode(response.body);
+
+    if (responseJson['code'] == 0) {
+      setState(() {
+        _promoCode = PromoCode(responseJson['promoCode']);
+        _order.promoCode = _promoCode.code;
+      });
+    } else {
+      showDialog(context: context, builder: (_) =>  CustomAlertDialog.shared.dialog("Простите", responseJson["error"], true, context, () {
+        setState(() {
+          _promoCode = null;
+        });
+      }));
+    }
+  }
+
+  String _promoCodeValue() {
+    switch (_promoCode.type) {
+      case PromoCodeType.FREEDELIVERY:
+        return _order.deliveryPrice.toString();
+      case PromoCodeType.BONUS:
+        return _promoCode.bonus.toString();
+      case PromoCodeType.SALE:
+        return _promoCode.sale.toString() + "%";
+      default:
+        return "";
+    }
+  }
+
+  int _orderTotal() {
+    return _orderItemsTotal() + _order.deliveryPrice;
+  }
+
+  int _orderTotalWithPromoCode() {
+    switch (_promoCode.type) {
+      case PromoCodeType.FREEDELIVERY:
+        return _orderTotal() - _order.deliveryPrice;
+      case PromoCodeType.BONUS:
+        return _orderTotal() - _promoCode.bonus;
+      case PromoCodeType.SALE:
+        return (_orderTotal() * ((100 - _promoCode.sale) / 100)).toInt();
+      default:
+        return 0;
+    }
   }
 
   void _calculateDeliveryPrice(int distance) {
@@ -227,78 +290,6 @@ class OrderPageState extends State<OrderPage> {
 
   }
 
-  Widget iosAlertDialog(OrderItem item) {
-    return CupertinoAlertDialog(
-      title: Text(
-        'Постойте!',
-          style: GoogleFonts.capriola(
-              fontSize: 18
-          )
-      ),
-      content: Text(
-        'Вы точно хотите убрать блюдо из заказа?',
-          style: GoogleFonts.capriola(
-              fontSize: 15
-          )
-      ),
-      actions: <Widget>[
-        CupertinoDialogAction(
-          child: Text(
-            'Нет',
-            style: GoogleFonts.capriola(
-              fontSize: 15
-            )
-          ),
-          onPressed: () {
-            Navigator.of(context, rootNavigator: true).pop();
-          }
-        ),
-        CupertinoDialogAction(
-          child: Text(
-              'Да',
-              style: GoogleFonts.capriola(
-                  fontSize: 15
-              )
-          ),
-          onPressed: () {
-            _removeOrderItem(item);
-            Navigator.of(context, rootNavigator: true).pop();
-          }
-        )
-      ],
-    );
-  }
-
-  Widget androidAlertDialog(OrderItem item) {
-    return AlertDialog(
-      title: Text(
-          'Постойте!'
-      ),
-      content: Text(
-          'Вы точно хотите убрать блюдо из заказа?'
-      ),
-      actions: <Widget>[
-        FlatButton(
-          child: Text(
-              'Нет'
-          ),
-          onPressed: () {
-            Navigator.of(context, rootNavigator: true).pop();
-          }
-        ),
-        FlatButton(
-          child: Text(
-              'Да'
-          ),
-          onPressed: () {
-            _removeOrderItem(item);
-            Navigator.of(context, rootNavigator: true).pop();
-          }
-        )
-      ],
-    );
-  }
-
   Widget _itemAtIndex(index) {
 
     int restIndex = index - (_order.orderItems.length + 1);
@@ -315,7 +306,7 @@ class OrderPageState extends State<OrderPage> {
           case SectionType.comment:
             return _commentItem();
           case SectionType.promocode:
-            return _promocodeItem();
+            return _promoCodeItem();
           case SectionType.payment:
             return _paymentItem();
           default:
@@ -695,7 +686,7 @@ class OrderPageState extends State<OrderPage> {
     );
   }
 
-  Widget _promocodeItem() {
+  Widget _promoCodeItem() {
     return Column (
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -705,7 +696,7 @@ class OrderPageState extends State<OrderPage> {
 //            controller: _phoneTextFieldController,
             focusNode: _focusOnPromoCode,
             onFieldSubmitted: (text)  async {
-              _activatePromoCode();
+              _activatePromoCode(text);
             },
             textCapitalization: TextCapitalization.characters,
             decoration: InputDecoration(
@@ -751,7 +742,7 @@ class OrderPageState extends State<OrderPage> {
               ),
 
               Text(
-                'KZT ' + _orderItemsTotal().toString(),
+                _orderItemsTotal().toString(),
                 style: GoogleFonts.openSans(
                   fontSize: 17,
                 ),
@@ -780,7 +771,7 @@ class OrderPageState extends State<OrderPage> {
                 ),
 
                 Text(
-                  'KZT ' + _order.deliveryPrice.toString(),
+                  _order.deliveryPrice.toString(),
                   style: GoogleFonts.openSans(
                       fontSize: 17,
                   ),
@@ -808,13 +799,95 @@ class OrderPageState extends State<OrderPage> {
               ),
 
               Text(
-                'KZT ' + (_orderItemsTotal() + _order.deliveryPrice).toString(),
+                _orderTotal().toString(),
                 style: GoogleFonts.openSans(
                     fontSize: 17,
                     fontWeight: FontWeight.bold
                 ),
               )
             ],
+          ),
+
+          (_promoCode != null) ? _promoCodePaymentItem() : Container()
+        ],
+      ),
+    );
+  }
+
+  Widget _promoCodePaymentItem() {
+    return Container(
+      margin: EdgeInsets.only(top: 10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          DottedLine(
+            dashColor: Colors.black,
+          ),
+
+          Padding(
+            padding: EdgeInsets.only(top: 10),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Text(
+                  'Промокод',
+                  style: GoogleFonts.openSans(
+                    fontSize: 17,
+                    color: Colors.blue
+                  ),
+                ),
+
+                Expanded(
+                    child: Padding(
+                      padding: EdgeInsets.only(left: 5, right: 5),
+                      child: DottedLine(
+                        dashColor: Colors.grey[400],
+                      ),
+                    )
+                ),
+
+                Text(
+                  '- ' + _promoCodeValue(),
+                  style: GoogleFonts.openSans(
+                      fontSize: 17,
+                      color: Colors.blue
+                  ),
+                )
+              ],
+            ),
+          ),
+
+          Padding(
+            padding: EdgeInsets.only(top: 10),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Text(
+                  'ИТОГО',
+                  style: GoogleFonts.openSans(
+                    fontSize: 17,
+                    fontWeight: FontWeight.bold
+                  ),
+                ),
+
+                Expanded(
+                    child: Padding(
+                      padding: EdgeInsets.only(left: 5, right: 5),
+                      child: DottedLine(
+                        dashColor: Colors.grey[400],
+                      ),
+                    )
+                ),
+
+                Text(
+                  _orderTotalWithPromoCode().toString(),
+                  style: GoogleFonts.openSans(
+                    fontSize: 17,
+                    fontWeight: FontWeight.bold
+                  ),
+                )
+              ],
+            ),
           )
         ],
       ),

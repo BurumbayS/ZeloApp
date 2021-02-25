@@ -24,6 +24,7 @@ class Order {
   OrderStatus orderStatus;
   @JsonKey(name: 'order_items')
   List<OrderItem> orderItems;
+  String promoCode;
   @JsonKey(name: 'delivery_price')
   int deliveryPrice;
   @JsonKey(name: 'client_id')

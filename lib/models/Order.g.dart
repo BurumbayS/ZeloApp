@@ -18,6 +18,7 @@ Order _$OrderFromJson(Map<String, dynamic> json) {
         ?.map((e) =>
             e == null ? null : OrderItem.fromJson(e as Map<String, dynamic>))
         ?.toList()
+    ..promoCode = json['promoCode'] as String
     ..deliveryPrice = json['delivery_price'] as int
     ..clientID = json['client_id'] as int
     ..clientName = json['client_name'] as String
@@ -37,6 +38,7 @@ Map<String, dynamic> _$OrderToJson(Order instance) => <String, dynamic>{
       'place': instance.place,
       'status': _$OrderStatusEnumMap[instance.orderStatus],
       'order_items': instance.orderItems,
+      'promoCode': instance.promoCode,
       'delivery_price': instance.deliveryPrice,
       'client_id': instance.clientID,
       'client_name': instance.clientName,
@@ -82,6 +84,7 @@ T _$enumDecodeNullable<T>(
 
 const _$OrderStatusEnumMap = {
   OrderStatus.NEW: 'NEW',
+  OrderStatus.COOKING: 'COOKING',
   OrderStatus.DELIVERING: 'DELIVERING',
   OrderStatus.COMPLETED: 'COMPLETED',
 };
