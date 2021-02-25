@@ -19,7 +19,9 @@ class PlacesListState extends State<PlacesList> {
 
   City _selectedCity;
   bool _citySelecting = false;
+
   List<Place> _places = new List();
+  bool _placesLoaded = false;
 
   @override
   void initState() {
@@ -88,6 +90,7 @@ class PlacesListState extends State<PlacesList> {
   void _loadPlaces() async {
     setState(() {
       _places = [];
+      _placesLoaded = false;
     });
 
     String url = Network.shared.api + '/places/';
@@ -104,6 +107,7 @@ class PlacesListState extends State<PlacesList> {
 
     setState(() {
       _places = placesList;
+      _placesLoaded = true;
     });
   }
 
@@ -159,6 +163,20 @@ class PlacesListState extends State<PlacesList> {
       body: Stack(
         children: <Widget>[
           _buildList(),
+
+          (_placesLoaded && _places.length == 0) ? Center(
+            child: Padding(
+              padding: EdgeInsets.only(left: 50, right: 50, bottom: 100),
+              child:  Text(
+                'Скоро здесь будут ваши любимые заведения',
+                textAlign: TextAlign.center,
+                style: GoogleFonts.openSans(
+                  fontSize: 20,
+                  color: Colors.grey
+                ),
+              ),
+            )
+          ) : Container(),
 
           Positioned(
             width: (_citySelecting) ? MediaQuery.of(context).size.width : 0,
