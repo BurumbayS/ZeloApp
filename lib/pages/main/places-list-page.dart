@@ -324,7 +324,7 @@ class PlacesListState extends State<PlacesList> {
       opacity: (_citySelecting) ? 1.0 : 0,
       child: Container(
         margin: EdgeInsets.only(bottom: 200, left: 30, right: 30),
-        height: 260,
+        height: 250,
         width: double.infinity,
         padding: EdgeInsets.all(20),
         decoration: BoxDecoration(
@@ -358,7 +358,6 @@ class PlacesListState extends State<PlacesList> {
               child: Container(
                 height: 50,
                 width: double.infinity,
-                margin: EdgeInsets.only(bottom: 10),
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.all(Radius.circular(5)),
