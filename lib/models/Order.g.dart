@@ -22,7 +22,8 @@ Order _$OrderFromJson(Map<String, dynamic> json) {
     ..deliveryPrice = json['delivery_price'] as int
     ..clientID = json['client_id'] as int
     ..clientName = json['client_name'] as String
-    ..price = json['price'] as int
+    ..total = json['total'] as int
+    ..totalWithPromoCode = json['total_with_promoCode'] as int
     ..deliveryAddress = json['delivery_address'] == null
         ? null
         : Address.fromJson(json['delivery_address'] as Map<String, dynamic>)
@@ -42,7 +43,8 @@ Map<String, dynamic> _$OrderToJson(Order instance) => <String, dynamic>{
       'delivery_price': instance.deliveryPrice,
       'client_id': instance.clientID,
       'client_name': instance.clientName,
-      'price': instance.price,
+      'total': instance.total,
+      'total_with_promoCode': instance.totalWithPromoCode,
       'delivery_address': instance.deliveryAddress,
       'contact_phone': instance.contactPhone,
       'comment': instance.comment,

@@ -136,7 +136,7 @@ class MyOrdersPageState extends State<MyOrdersPage> {
             Padding (
               padding: EdgeInsets.only(right: 10),
               child: Text(
-                order.total().toString(),
+                order.getTotal().toString(),
                 style: GoogleFonts.openSans(
                     fontSize: 18,
                     color: Colors.black.withOpacity(0.7)

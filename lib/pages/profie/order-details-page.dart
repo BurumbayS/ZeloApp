@@ -337,7 +337,7 @@ class OrderDetailsPageState extends State<OrderDetailsPage> {
                 ),
 
                 Text(
-                  widget.order.total().toString() + ' KZT',
+                  widget.order.getTotal().toString() + ' KZT',
                   style: TextStyle(
                       fontSize: 16,
                   ),

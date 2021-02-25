@@ -31,7 +31,9 @@ class Order {
   int clientID;
   @JsonKey(name: 'client_name')
   String clientName;
-  int price;
+  int total;
+  @JsonKey(name: 'total_with_promoCode')
+  int totalWithPromoCode;
   @JsonKey(name: 'delivery_address')
   Address deliveryAddress;
   @JsonKey(name: 'contact_phone')
@@ -57,7 +59,7 @@ class Order {
     return formattedDate;
   }
 
-  int total() {
+  int getTotal() {
     int total = 0;
 
     for (var i = 0; i < orderItems.length; i++) {
@@ -68,7 +70,9 @@ class Order {
   }
 
   int totalWithDelivery() {
-    return total() + deliveryPrice;
+    this.total = getTotal() + deliveryPrice;
+
+    return getTotal() + deliveryPrice;
   }
 
   factory Order.fromJson(Map<String, dynamic> json) => _$OrderFromJson(json);

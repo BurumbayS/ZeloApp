@@ -248,21 +248,24 @@ class OrderPageState extends State<OrderPage> {
     }
   }
 
-  int _orderTotal() {
-    return _orderItemsTotal() + _order.deliveryPrice;
-  }
-
   int _orderTotalWithPromoCode() {
+    var promoCodeSum = 0;
+
     switch (_promoCode.type) {
       case PromoCodeType.FREEDELIVERY:
-        return _orderTotal() - _order.deliveryPrice;
+        promoCodeSum = _order.deliveryPrice;
+        break;
       case PromoCodeType.BONUS:
-        return _orderTotal() - _promoCode.bonus;
+        promoCodeSum = _promoCode.bonus;
+        break;
       case PromoCodeType.SALE:
-        return (_orderTotal() * ((100 - _promoCode.sale) / 100)).toInt();
-      default:
-        return 0;
+        promoCodeSum = (_order.totalWithDelivery() * (_promoCode.sale / 100)).toInt();
+        break;
     }
+
+    _order.totalWithPromoCode = _order.totalWithDelivery() - promoCodeSum;
+
+    return _order.totalWithPromoCode;
   }
 
   void _calculateDeliveryPrice(int distance) {
@@ -742,7 +745,7 @@ class OrderPageState extends State<OrderPage> {
               ),
 
               Text(
-                _orderItemsTotal().toString(),
+                _order.getTotal().toString(),
                 style: GoogleFonts.openSans(
                   fontSize: 17,
                 ),
@@ -799,7 +802,7 @@ class OrderPageState extends State<OrderPage> {
               ),
 
               Text(
-                _orderTotal().toString(),
+                _order.totalWithDelivery().toString(),
                 style: GoogleFonts.openSans(
                     fontSize: 17,
                     fontWeight: FontWeight.bold
