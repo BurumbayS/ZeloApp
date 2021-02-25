@@ -22,8 +22,8 @@ class Address {
   int distance;
 
   Address() {
-    latitude = 45.015201348779435;
-    longitude = 78.3691672004501;
+//    latitude = 45.015201348779435;
+//    longitude = 78.3691672004501;
     firstAddress = '';
     secondAddress = '';
   }

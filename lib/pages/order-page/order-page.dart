@@ -124,15 +124,6 @@ class OrderPageState extends State<OrderPage> {
     return itemsCount;
   }
 
-  int _orderItemsTotal() {
-    int total = 0;
-    _order.orderItems.forEach((element) {
-      total += element.totalPrice();
-    });
-
-    return total;
-  }
-
   void _increaseOrderCount(OrderItem item) {
     setState(() {
       item.count++;
@@ -268,27 +259,23 @@ class OrderPageState extends State<OrderPage> {
     return _order.totalWithPromoCode;
   }
 
-  void _calculateDeliveryPrice(int distance) {
-    var price = 0;
+  void _calculateDeliveryPrice(int distance) async {
 
-    if (distance < 1000) {
-      price = 300;
-    }
-    if (distance > 1000 && distance <= 4000) {
-      price = 400;
-    }
-    if (distance > 4000 && distance <= 6000) {
-      price = 500;
-    }
-    if (distance > 6000 && distance <= 7500) {
-      price = 600;
-    }
-    if (distance > 7500) {
-      price = 800;
+    var deliveryPrice = 0;
+
+    var response = await http.get(Network.shared.api + "/deliveryData/");
+    var responseJson = jsonDecode(response.body);
+
+    var prices = responseJson['prices'];
+    for (var item in prices) {
+      print(distance);
+      if (distance > item['from'] && distance <= item['to']) {
+        deliveryPrice = item['price'];
+      }
     }
 
     setState(() {
-      _order.deliveryPrice = price;
+      _order.deliveryPrice = deliveryPrice;
     });
 
   }

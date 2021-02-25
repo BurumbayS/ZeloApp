@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:ZeloApp/models/Address.dart';
 import 'package:ZeloApp/services/Network.dart';
+import 'package:ZeloApp/services/Storage.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -115,6 +116,26 @@ class MapSearchPageState extends State<MapSearchPage>  {
     }
 
   }
+  
+  Point _mapCenter() {
+    if (address.latitude != null && address.longitude != null) {
+      return Point(latitude: address.latitude, longitude: address.longitude);
+    }
+
+    String city = Storage.shared.getItem('city');
+
+    if (city == City.Taldykorgan.toString()) {
+      return Point(latitude: 45.012569, longitude: 78.375827);
+    }
+    if (city == City.Semey.toString()) {
+      return Point(latitude: 50.412597, longitude: 80.249064);
+    }
+    if (city == City.Taraz.toString()) {
+      return Point(latitude: 42.901015, longitude: 71.372865);
+    }
+
+    return Point(latitude: 0, longitude: 0);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -138,7 +159,7 @@ class MapSearchPageState extends State<MapSearchPage>  {
 
                       double zoom = (address.firstAddress == '') ? 13 : 18;
                       await controller.move(
-                          point: Point(latitude: address.latitude, longitude: address.longitude),
+                          point: _mapCenter(),
                           zoom: zoom,
                           animation: const MapAnimation(smooth: true, duration: 0.5)
                       );
