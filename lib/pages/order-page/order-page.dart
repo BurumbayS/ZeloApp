@@ -268,7 +268,7 @@ class OrderPageState extends State<OrderPage> {
 
     var prices = responseJson['prices'];
     for (var item in prices) {
-      print(distance);
+      print("Distancce $distance");
       if (distance > item['from'] && distance <= item['to']) {
         deliveryPrice = item['price'];
       }

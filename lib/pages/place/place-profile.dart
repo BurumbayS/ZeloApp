@@ -65,14 +65,14 @@ class PlaceProfileState extends State<PlaceProfile>{
   }
 
   void categorizeMenu(menuItems) {
-    print(_placeInfo.categories);
+
     for (var category in _placeInfo.categories.values) {
       _categorizedMenuItems[category] = new List();
     }
 
     for (MenuItem item in menuItems) {
       var category = item.category;
-      print(category);
+
       _categorizedMenuItems[category].add(item);
     }
 

@@ -4,10 +4,12 @@ import 'dart:io';
 import 'package:ZeloApp/models/Address.dart';
 import 'package:ZeloApp/services/Network.dart';
 import 'package:ZeloApp/services/Storage.dart';
+import 'package:ZeloApp/utils/alertDialog.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:json_annotation/json_annotation.dart';
 import 'package:yandex_mapkit/yandex_mapkit.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -37,15 +39,20 @@ class MapSearchPage extends StatefulWidget{
 class MapSearchPageState extends State<MapSearchPage>  {
 
   static const PLACE_API_KEY = "AIzaSyC4ATGNItCqpljzi47MRKMFGRT-ZNZvtJg";
+  static const _allowedTaldykorganRegions = ["Талдыкорган", "село Еркин", "село Отенай"];
+
   PermissionStatus _permissionStatus = PermissionStatus.unknown;
 
   bool _loading = false;
 
   int _requestCount = 0;
   Address address = new Address();
+  City currentCity;
 
   YandexMapController controller;
   String _yandexMapKey = "";
+
+  var _showingAlert = false;
 
   @override
   void initState() {
@@ -98,14 +105,11 @@ class MapSearchPageState extends State<MapSearchPage>  {
 
       String baseURL = "https://geocode-maps.yandex.ru/1.x/";
       String request = '$baseURL?format=json&apikey=$_yandexMapKey&geocode=$long,$lat';
-      Response response = await Dio().get(request);
+      Response addressResponse = await Dio().get(request);
 
       Response distanceResponse = await Dio().get("https://maps.googleapis.com/maps/api/distancematrix/json?language=ru_RU&units=metric&origins=$placeLat,$placeLong&destinations=$lat,$long&key=AIzaSyDxgI8Z7Tw33nw46fsN98hEEwTdqgZoCBY");
 
-      setState(() {
-        String addressString = response.data['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']['name'];
-        address.firstAddress = addressString;
-      });
+      _setAddress(addressResponse);
 
       int distanceInMeters = distanceResponse.data['rows'][0]['elements'][0]['distance']['value'];
       address.distance = distanceInMeters;
@@ -116,6 +120,50 @@ class MapSearchPageState extends State<MapSearchPage>  {
     }
 
   }
+
+  void _setAddress(Response addressResponse) {
+//    var localityName = addressResponse.data['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']["metaDataProperty"]["GeocoderMetaData"]["AddressDetails"]["Country"]["AdministrativeArea"]["SubAdministrativeArea"]["Locality"]["LocalityName"];
+    var components = addressResponse.data['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']["metaDataProperty"]["GeocoderMetaData"]["Address"]["Components"];
+
+    if (currentCity == City.Taldykorgan) {
+      var allowed = false;
+
+      for (Map component in components) {
+        if (component["kind"] == "locality") {
+          var region = component["name"];
+          if (_allowedTaldykorganRegions.contains(region)) {
+            allowed = true;
+          } else {
+            allowed = false;
+          }
+        }
+      }
+
+      if (allowed) {
+        setState(() {
+          String addressString = addressResponse.data['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']['name'];
+          address.firstAddress = addressString;
+        });
+      } else {
+
+        if (!_showingAlert) {
+          _showingAlert = true;
+          showDialog(context: context, builder: (_) =>  CustomAlertDialog.shared.dialog("Простите", "Это заведение не доставляет в данный регион", true, context, (){
+            _showingAlert = false;
+          } ));
+        }
+
+        setState(() {
+          address.firstAddress = "";
+        });
+      }
+    } else {
+      setState(() {
+        String addressString = addressResponse.data['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']['name'];
+        address.firstAddress = addressString;
+      });
+    }
+  }
   
   Point _mapCenter() {
     if (address.latitude != null && address.longitude != null) {
@@ -125,12 +173,15 @@ class MapSearchPageState extends State<MapSearchPage>  {
     String city = Storage.shared.getItem('city');
 
     if (city == City.Taldykorgan.toString()) {
+      currentCity = City.Taldykorgan;
       return Point(latitude: 45.012569, longitude: 78.375827);
     }
     if (city == City.Semey.toString()) {
+      currentCity = City.Semey;
       return Point(latitude: 50.412597, longitude: 80.249064);
     }
     if (city == City.Taraz.toString()) {
+      currentCity = City.Taraz;
       return Point(latitude: 42.901015, longitude: 71.372865);
     }
 
