@@ -86,11 +86,9 @@ class AuthPageState extends State<AuthPage> {
               "Ваш аккаунт успешно создан!\nВойдите, используя ваши данные",
               true,
               context, () {
-                _passwordTextFieldController.text = "";
-                _mailTextFieldController.text = "";
-                setState(() {
-                  _hasAccount = true;
-                });
+                Storage.shared.setItem("token", responseJson['token'].toString());
+                Storage.shared.setItem("user_data", json.encode(responseJson['user']));
+                Navigator.pop(context);
               }));
     } else {
       showDialog(context: context, builder: (_) =>
@@ -162,6 +160,18 @@ class AuthPageState extends State<AuthPage> {
             'Регистрация',
             style: GoogleFonts.capriola(
                 fontSize: 26
+            ),
+          ),
+        ),
+
+        Padding(
+          padding: EdgeInsets.only(left: 20, right: 20),
+          child: Text (
+            "Зарегестрируйтесь, используя свои данные, или войдите, если вы уже зарегестрированы",
+            textAlign: TextAlign.center,
+            style: GoogleFonts.openSans(
+              fontSize: 13,
+              color: Colors.grey
             ),
           ),
         ),
