@@ -45,6 +45,7 @@ dependencies:
   intl: ^0.16.1
   cached_network_image: ^2.2.0
   enum_to_string: ^1.0.14
+  flutter_masked_text: ^0.8.0
 
 dev_dependencies:
   flutter_test:

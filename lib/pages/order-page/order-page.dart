@@ -16,6 +16,7 @@ import 'package:dotted_line/dotted_line.dart';
 import '../../models/OrderItem.dart';
 import '../../models/Order.dart';
 import 'dart:io' show Platform;
+import 'package:flutter_masked_text/flutter_masked_text.dart';
 
 import '../../services/Network.dart';
 
@@ -75,18 +76,25 @@ class OrderPageState extends State<OrderPage> {
 
   final GlobalKey<AnimatedListState> orderListKey = GlobalKey<AnimatedListState>();
 
-//  final _phoneTextFieldController = TextEditingController();
+  var _phoneTextController = new MaskedTextController(mask: '+7 (000) 000-00-00');
   FocusNode _focusOnPhone = new FocusNode();
   FocusNode _focusOnPromoCode = new FocusNode();
 
+  var _phoneNumberDigits = "";
+
   initState() {
       _focusOnPhone.addListener(() async {
+
         if (!_focusOnPhone.hasFocus && !_focusOnPromoCode.hasFocus) {
           await Future.delayed(Duration(milliseconds: 100));
 
           setState(() {
             confirmOrderBtnBottomMargin = 50;
           });
+
+          if (_order.contactPhone == "") {
+
+          }
         } else {
           setState(() {
             confirmOrderBtnBottomMargin = -50;
@@ -110,7 +118,16 @@ class OrderPageState extends State<OrderPage> {
   }
 
   bool _orderCompleted() {
-    return (_order.deliveryAddress.firstAddress != '' && _order.contactPhone.length == 11);
+    if (_order.deliveryAddress.firstAddress == "") {
+      showDialog(context: context, builder: (_) =>  CustomAlertDialog.shared.dialog("Простите", "Укажите адрес", true, context, (){} ));
+      return false;
+    }
+    if (_order.contactPhone.length != '+7 (000) 000-00-00'.length) {
+      showDialog(context: context, builder: (_) =>  CustomAlertDialog.shared.dialog("Простите", "Введите полный номер телефона", true, context, (){} ));
+      return false;
+    }
+
+    return true;
   }
 
   int _itemsCount() {
@@ -368,9 +385,9 @@ class OrderPageState extends State<OrderPage> {
                       ),
 
                       child: FlatButton(
-                        color: (_orderCompleted()) ? Colors.blue[400] : Colors.grey,
+                        color: Colors.blue[400],
                         textColor: Colors.white,
-                        splashColor: (_orderCompleted()) ? Colors.blue[700] : Colors.grey[0],
+                        splashColor: Colors.blue[700],
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(25.0)
                         ),
@@ -378,7 +395,7 @@ class OrderPageState extends State<OrderPage> {
                         child: Text(
                             'Оформить заказ',
                             style: GoogleFonts.openSans(
-                                color: (_orderCompleted()) ? Colors.white : Colors.grey[300],
+                                color: Colors.white,
                                 fontSize: 22,
                                 decoration: TextDecoration.none,
                                 fontWeight: FontWeight.bold
@@ -615,12 +632,13 @@ class OrderPageState extends State<OrderPage> {
         Padding (
           padding: EdgeInsets.only(left: 16),
           child: TextFormField(
-//            controller: _phoneTextFieldController,
+            controller: _phoneTextController,
             focusNode: _focusOnPhone,
             keyboardType: TextInputType.number,
             onChanged: (number) {
                 setState(() {
                   _order.contactPhone = number;
+//                  _phoneTextFieldController.text = formattedNumber(number);
                 });
             },
             decoration: InputDecoration(
