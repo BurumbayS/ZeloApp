@@ -303,7 +303,7 @@ class OrderPageState extends State<OrderPage> {
     int sectionIndex = (restIndex ~/ 2) + 1;
 
       if (restIndex % 2 == 0) {
-        return _buildListHeader(_sections[sectionIndex].title);
+        return _buildListHeader(_sections[sectionIndex]);
       } else {
         switch (_sections[sectionIndex]) {
           case SectionType.address:
@@ -357,7 +357,7 @@ class OrderPageState extends State<OrderPage> {
                       itemBuilder: (context, i, animation) {
                         if (i <= _order.orderItems.length) {
                           if (i == 0) {
-                            return _buildListHeader(SectionType.order.title);
+                            return _buildListHeader(SectionType.order);
                           } else {
                             return _orderItem(context, _order.orderItems[i-1], animation);
                           }
@@ -445,22 +445,39 @@ class OrderPageState extends State<OrderPage> {
     );
   }
 
-  Widget _buildListHeader(String title) {
+  Widget _buildListHeader(SectionType section) {
+
     return Padding (
       padding: EdgeInsets.only(top: 20),
       child: Column (
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Padding(
-            padding: EdgeInsets.only(left: 16),
-            child: Text(
-              title,
-              style: GoogleFonts.openSans(
-                  color: Colors.grey[800],
-                  fontSize: 15,
-                  fontWeight: FontWeight.bold
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Padding(
+                padding: EdgeInsets.only(left: 16),
+                child: Text(
+                  section.title,
+                  style: GoogleFonts.openSans(
+                      color: Colors.grey[800],
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold
+                  ),
+                ),
               ),
-            ),
+
+              (section == SectionType.promocode || section == SectionType.comment) ? Padding(
+                padding: EdgeInsets.only(left: 10),
+                child: Text(
+                  "Необязательно*",
+                  style: GoogleFonts.openSans(
+                    color: Colors.grey,
+                    fontSize: 13,
+                  ),
+                ),
+              ) : Container(),
+            ],
           ),
 
           Divider()
