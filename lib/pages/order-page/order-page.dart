@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:ZeloApp/models/Address.dart';
 import 'package:ZeloApp/models/PromoCode.dart';
+import 'package:ZeloApp/pages/order-page/address-search-page.dart';
 import 'package:ZeloApp/pages/order-page/order-comment-page.dart';
 import 'package:ZeloApp/utils/alertDialog.dart';
 import 'package:flutter/material.dart';
@@ -79,8 +80,6 @@ class OrderPageState extends State<OrderPage> {
   var _phoneTextController = new MaskedTextController(mask: '+7 (000) 000-00-00');
   FocusNode _focusOnPhone = new FocusNode();
   FocusNode _focusOnPromoCode = new FocusNode();
-
-  var _phoneNumberDigits = "";
 
   initState() {
       _focusOnPhone.addListener(() async {
@@ -580,7 +579,10 @@ class OrderPageState extends State<OrderPage> {
         final result = await Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => MapSearchPage(_order.deliveryAddress, widget.placeCoordinates),
+              builder: (context) => AddressSearchPage(
+                address: _order.deliveryAddress,
+                placeCoordinates: widget.placeCoordinates,
+              ),
             )
         );
 

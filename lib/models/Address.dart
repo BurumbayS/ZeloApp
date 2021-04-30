@@ -19,6 +19,7 @@ class Address {
   double longitude;
   String firstAddress;
   String secondAddress;
+  String description;
   int distance;
 
   Address() {

@@ -12,6 +12,7 @@ Address _$AddressFromJson(Map<String, dynamic> json) {
     ..longitude = (json['longitude'] as num)?.toDouble()
     ..firstAddress = json['firstAddress'] as String
     ..secondAddress = json['secondAddress'] as String
+    ..description = json['description'] as String
     ..distance = json['distance'] as int;
 }
 
@@ -20,5 +21,6 @@ Map<String, dynamic> _$AddressToJson(Address instance) => <String, dynamic>{
       'longitude': instance.longitude,
       'firstAddress': instance.firstAddress,
       'secondAddress': instance.secondAddress,
+      'description': instance.description,
       'distance': instance.distance,
     };
