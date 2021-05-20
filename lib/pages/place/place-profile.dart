@@ -210,11 +210,11 @@ class PlaceProfileState extends State<PlaceProfile>{
         })
       );
     } else {
-      if (_placeInfo.notWorking) {
-        showDialog(context: context, builder: (_) => CustomAlertDialog.shared.dialog("Простите\n", "Заведение не принимает заказов в данное время", true, context, () {
-          Navigator.pop(context);
-        }));
-      } else
+//      if (_placeInfo.notWorking) {
+//        showDialog(context: context, builder: (_) => CustomAlertDialog.shared.dialog("Простите\n", "Заведение не принимает заказов в данное время", true, context, () {
+//          Navigator.pop(context);
+//        }));
+//      } else
       if (item.stopped) {
         showDialog(context: context, builder: (_) => CustomAlertDialog.shared.dialog("Простите\n", "Данное блюдо не может быть приготовлено в данное время", true, context, () {
           Navigator.pop(context);

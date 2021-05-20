@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:ZeloApp/models/Address.dart';
+import 'package:ZeloApp/services/MapApi.dart';
 import 'package:ZeloApp/services/Network.dart';
 import 'package:ZeloApp/services/Storage.dart';
 import 'package:ZeloApp/utils/alertDialog.dart';
@@ -50,7 +51,6 @@ class MapSearchPageState extends State<MapSearchPage>  {
   City currentCity;
 
   YandexMapController controller;
-  String _yandexMapKey = "";
 
   var _showingAlert = false;
 
@@ -63,10 +63,14 @@ class MapSearchPageState extends State<MapSearchPage>  {
   }
 
   void _loadMapApiKey() async {
+    if (MapApi.shared.mapKey != null) {
+      return;
+    }
+
     Response response = await Dio().get(Network.shared.api + "/mapApiKey/");
 
     if (response.data['code'] == 0) {
-      _yandexMapKey = response.data['key'];
+      MapApi.shared.mapKey = response.data['key'];
     }
   }
 
@@ -104,7 +108,7 @@ class MapSearchPageState extends State<MapSearchPage>  {
       address.longitude = long;
 
       String baseURL = "https://geocode-maps.yandex.ru/1.x/";
-      String request = '$baseURL?format=json&apikey=$_yandexMapKey&geocode=$long,$lat';
+      String request = '$baseURL?format=json&apikey=${MapApi.shared.mapKey}&geocode=$long,$lat';
       Response addressResponse = await Dio().get(request);
 
       Response distanceResponse = await Dio().get("https://maps.googleapis.com/maps/api/distancematrix/json?language=ru_RU&units=metric&origins=$placeLat,$placeLong&destinations=$lat,$long&key=AIzaSyDxgI8Z7Tw33nw46fsN98hEEwTdqgZoCBY");
@@ -122,7 +126,6 @@ class MapSearchPageState extends State<MapSearchPage>  {
   }
 
   void _setAddress(Response addressResponse) {
-//    var localityName = addressResponse.data['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']["metaDataProperty"]["GeocoderMetaData"]["AddressDetails"]["Country"]["AdministrativeArea"]["SubAdministrativeArea"]["Locality"]["LocalityName"];
     var components = addressResponse.data['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']["metaDataProperty"]["GeocoderMetaData"]["Address"]["Components"];
 
     if (currentCity == City.Taldykorgan) {
@@ -284,7 +287,7 @@ class MapSearchPageState extends State<MapSearchPage>  {
               child: Column(
                 children: <Widget>[
                   Padding(
-                    padding: EdgeInsets.only(top: 10, bottom: 20, right: 10),
+                    padding: EdgeInsets.only(top: 10, bottom: 10, right: 10),
                     child: Row(
                       children: <Widget>[
                         Container(
@@ -297,10 +300,11 @@ class MapSearchPageState extends State<MapSearchPage>  {
                           child: Container(
                             margin: EdgeInsets.only(right: 10),
                             child: Text(
-                              address.firstAddress,
+                              (address.firstAddress == "") ? "Укажите адрес" : address.firstAddress,
                               maxLines: 10,
                               style: TextStyle(
-                                  fontSize: 18
+                                fontSize: 18,
+                                color: (address.firstAddress == "") ? Colors.grey : Colors.black,
                               ),
                             ),
                           ),
@@ -319,38 +323,38 @@ class MapSearchPageState extends State<MapSearchPage>  {
                     ),
                   ),
 
-                  InkWell(
-                    onTap: () async {
-                      final result = await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => DeliveryAddressDetails(address.secondAddress),
-                          )
-                      );
-                      setState(() {
-                        address.secondAddress = result;
-                      });
-                    },
-                    child: Row(
-                      children: <Widget>[
-                        Container(
-                          height: 20,
-                          width: 20,
-                          margin: EdgeInsets.only(left: 21, right: 15),
-                          child: Image.asset('assets/images/home.png'),
-                        ),
-                        Container(
-                          child: Text(
-                            (address.secondAddress == '') ? 'Подъезд, квартира и т.д' : address.secondAddress,
-                            style: TextStyle(
-                                fontSize: 18,
-                                color: (address.secondAddress == '') ? Colors.grey[500] : Colors.black
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
+//                  InkWell(
+//                    onTap: () async {
+//                      final result = await Navigator.push(
+//                          context,
+//                          MaterialPageRoute(
+//                            builder: (context) => DeliveryAddressDetails(address.secondAddress),
+//                          )
+//                      );
+//                      setState(() {
+//                        address.secondAddress = result;
+//                      });
+//                    },
+//                    child: Row(
+//                      children: <Widget>[
+//                        Container(
+//                          height: 20,
+//                          width: 20,
+//                          margin: EdgeInsets.only(left: 21, right: 15),
+//                          child: Image.asset('assets/images/home.png'),
+//                        ),
+//                        Container(
+//                          child: Text(
+//                            (address.secondAddress == '') ? 'Подъезд, квартира и т.д' : address.secondAddress,
+//                            style: TextStyle(
+//                                fontSize: 18,
+//                                color: (address.secondAddress == '') ? Colors.grey[500] : Colors.black
+//                            ),
+//                          ),
+//                        )
+//                      ],
+//                    ),
+//                  ),
 
                   Container(
                     height: 50,
@@ -365,7 +369,7 @@ class MapSearchPageState extends State<MapSearchPage>  {
                       ),
 
                       child: Text(
-                          'Подтвердить адрес',
+                          'Выбрать адрес',
                           style: GoogleFonts.openSans(
                               fontSize: 20,
                               decoration: TextDecoration.none,
