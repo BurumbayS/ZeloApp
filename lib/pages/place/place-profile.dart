@@ -8,6 +8,7 @@ import 'package:ZeloApp/services/Storage.dart';
 import 'package:ZeloApp/utils/alertDialog.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:stretchy_header/stretchy_header.dart';
 import 'package:flutter/cupertino.dart';
@@ -36,6 +37,8 @@ class PlaceProfileState extends State<PlaceProfile>{
   Place _placeInfo;
   Map<String, List<MenuItem>> _categorizedMenuItems = new Map();
 
+  var _loading = false;
+
   PlaceProfileState(Place place) {
     _placeInfo = place;
   }
@@ -48,6 +51,10 @@ class PlaceProfileState extends State<PlaceProfile>{
   }
 
   void loadMenuItems() async {
+    setState(() {
+      _loading = true;
+    });
+
     var placeID = _placeInfo.id;
     String url = Network.shared.api + '/menuItems/$placeID';
     var response = await http.get(url);
@@ -62,6 +69,10 @@ class PlaceProfileState extends State<PlaceProfile>{
     });
 
     categorizeMenu(menuItemsList);
+
+    setState(() {
+      _loading = false;
+    });
   }
 
   void categorizeMenu(menuItems) {
@@ -164,6 +175,14 @@ class PlaceProfileState extends State<PlaceProfile>{
     return false;
   }
 
+  int _cellsCount() {
+    if (_loading) {
+      return 3;
+    } else {
+      return getCategoryItemsCount(_selectedCategory) + 2;
+    }
+  }
+
   String _getOrderTotalInfo() {
     int totalCount = 0;
     int totalPrice = 0;
@@ -210,11 +229,11 @@ class PlaceProfileState extends State<PlaceProfile>{
         })
       );
     } else {
-//      if (_placeInfo.notWorking) {
-//        showDialog(context: context, builder: (_) => CustomAlertDialog.shared.dialog("Простите\n", "Заведение не принимает заказов в данное время", true, context, () {
-//          Navigator.pop(context);
-//        }));
-//      } else
+      if (_placeInfo.notWorking) {
+        showDialog(context: context, builder: (_) => CustomAlertDialog.shared.dialog("Простите\n", "Заведение не принимает заказов в данное время", true, context, () {
+          Navigator.pop(context);
+        }));
+      } else
       if (item.stopped) {
         showDialog(context: context, builder: (_) => CustomAlertDialog.shared.dialog("Простите\n", "Данное блюдо не может быть приготовлено в данное время", true, context, () {
           Navigator.pop(context);
@@ -299,7 +318,7 @@ class PlaceProfileState extends State<PlaceProfile>{
                     ),
                   )
               ),
-              itemCount: getCategoryItemsCount(_selectedCategory) + 2,
+              itemCount: _cellsCount(),
               itemBuilder: (context, index) {
                 if (index == 0) {
                   return _buildHeader();
@@ -307,6 +326,17 @@ class PlaceProfileState extends State<PlaceProfile>{
 
                 if (index == 1) {
                   return _buildCategoryRow();
+                }
+
+                if (_loading && index == 2) {
+                  return Container (
+                    margin: EdgeInsets.only(top: 20),
+                    child: SpinKitRing(
+                      color: Colors.blue,
+                      size: 30,
+                      lineWidth: 2,
+                    )
+                  );
                 }
 
                 return _buildMenuItem(context, index - 2, _categorizedMenuItems[_selectedCategory][index - 2]);

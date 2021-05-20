@@ -10,6 +10,7 @@ import 'package:ZeloApp/utils/alertDialog.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 
@@ -22,6 +23,8 @@ class PlacesListState extends State<PlacesList> {
 
   List<Place> _places = new List();
   bool _placesLoaded = false;
+
+  var _loading = false;
 
   @override
   void initState() {
@@ -89,6 +92,7 @@ class PlacesListState extends State<PlacesList> {
 
   void _loadPlaces() async {
     setState(() {
+      _loading = true;
       _places = [];
       _placesLoaded = false;
     });
@@ -108,6 +112,7 @@ class PlacesListState extends State<PlacesList> {
     setState(() {
       _places = placesList;
       _placesLoaded = true;
+      _loading = false;
     });
   }
 
@@ -134,9 +139,11 @@ class PlacesListState extends State<PlacesList> {
       appBar: AppBar(
         title: InkWell(
           onTap: () {
-            setState(() {
-              _citySelecting = !_citySelecting;
-            });
+            if (!_loading) {
+              setState(() {
+                _citySelecting = !_citySelecting;
+              });
+            }
           },
           child: Text(
             _selectedCityTitle(),
@@ -191,6 +198,36 @@ class PlacesListState extends State<PlacesList> {
                 )
             ),
           ),
+
+          (_loading) ? Positioned(
+            top: 0,
+            left: 0,
+            bottom: 0,
+            right: 0,
+            child: Container(
+                color: Colors.black.withOpacity(0.1),
+                child: Center(
+                  child: Container(
+                    width: 100,
+                    height: 100,
+                    margin: EdgeInsets.only(bottom: 150),
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(25.0),
+                        boxShadow: [BoxShadow(
+                          color: Colors.grey.withOpacity(0.5),
+                          spreadRadius: 1,
+                          blurRadius: 10,
+                          offset: Offset(0, 3),
+                        ),]
+                    ),
+                    child: SpinKitFadingCircle(
+                        color: Colors.grey
+                    ),
+                  ),
+                )
+            ),
+          ) : Container()
         ],
       ),
     );
@@ -342,7 +379,7 @@ class PlacesListState extends State<PlacesList> {
       opacity: (_citySelecting) ? 1.0 : 0,
       child: Container(
         margin: EdgeInsets.only(bottom: 200, left: 30, right: 30),
-        height: 250,
+        height: 200,
         width: double.infinity,
         padding: EdgeInsets.all(20),
         decoration: BoxDecoration(
@@ -411,28 +448,28 @@ class PlacesListState extends State<PlacesList> {
                 ),
               ),
             ),
-            InkWell(
-              onTap: () {
-                _selectCity(City.Taraz);
-              },
-              child: Container(
-                height: 50,
-                width: double.infinity,
-                margin: EdgeInsets.only(bottom: 10),
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(5)),
-                  color: (_selectedCity == City.Taraz) ? Colors.blue : Colors.white,
-                ),
-                child: Text(
-                  'Тараз',
-                  style: GoogleFonts.openSans(
-                      fontSize: 18,
-                      color: (_selectedCity == City.Taraz) ? Colors.white : Colors.blue
-                  ),
-                ),
-              ),
-            ),
+//            InkWell(
+//              onTap: () {
+//                _selectCity(City.Taraz);
+//              },
+//              child: Container(
+//                height: 50,
+//                width: double.infinity,
+//                margin: EdgeInsets.only(bottom: 10),
+//                alignment: Alignment.center,
+//                decoration: BoxDecoration(
+//                  borderRadius: BorderRadius.all(Radius.circular(5)),
+//                  color: (_selectedCity == City.Taraz) ? Colors.blue : Colors.white,
+//                ),
+//                child: Text(
+//                  'Тараз',
+//                  style: GoogleFonts.openSans(
+//                      fontSize: 18,
+//                      color: (_selectedCity == City.Taraz) ? Colors.white : Colors.blue
+//                  ),
+//                ),
+//              ),
+//            ),
           ],
         ),
       ),
