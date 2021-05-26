@@ -252,105 +252,109 @@ class PlacesListState extends State<PlacesList> {
 
       child: Container(
 
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-
+        child: Stack(
           children: <Widget>[
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
 
-            ClipRRect (
-              borderRadius: BorderRadius.only(topLeft: Radius.circular(10.0), topRight: Radius.circular(10.0)),
+              children: <Widget>[
 
-              child: SizedBox (
-                height: 130,
-                width: double.infinity,
-                  child: CachedNetworkImage(
-                    imageUrl: (place.wallpaper != null) ? Network.shared.host() + place.wallpaper : "",
-                    placeholder: (context, url) => Image.asset('assets/images/place_placeholder.png', fit: BoxFit.cover,),
-                    errorWidget: (context, url, error) => Icon(Icons.error),
-                    fit: BoxFit.cover,
-                  ),
-              ),
-            ),
+                ClipRRect (
+                  borderRadius: BorderRadius.only(topLeft: Radius.circular(10.0), topRight: Radius.circular(10.0)),
 
-            Container(
-              width: double.infinity,
-
-              child: Row(
-
-                children: <Widget>[
-
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Container (
-                          margin: EdgeInsets.only(left: 10, top: 10),
-                          child: Text(
-                              place.name,
-                              maxLines: 1,
-                              style: GoogleFonts.openSans(
-                                  fontSize: 18,
-                                  color: Colors.grey[800],
-                                  fontWeight: FontWeight.w700
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-
-                        Container (
-                          margin: EdgeInsets.only(left: 10, right: 10),
-                          child: Text(
-                              place.description,
-                              overflow: TextOverflow.ellipsis,
-                              style: GoogleFonts.capriola(
-                                fontSize: 14,
-                                color: Colors.grey[800],
-                                fontWeight: FontWeight.w100,
-                              )
-                          ),
-                        )
-                      ],
+                  child: SizedBox (
+                    height: 130,
+                    width: double.infinity,
+                    child: CachedNetworkImage(
+                      imageUrl: (place.wallpaper != null) ? Network.shared.host() + place.wallpaper : "",
+                      placeholder: (context, url) => Image.asset('assets/images/place_placeholder.png', fit: BoxFit.cover,),
+                      errorWidget: (context, url, error) => Icon(Icons.error),
+                      fit: BoxFit.cover,
                     ),
                   ),
+                ),
 
-                  Container(
-                      margin: EdgeInsets.only(right: 10, top: 7, left: 10),
-//                  height: 40,
-                      padding: EdgeInsets.only(left: 10, top: 5, right: 10, bottom: 5),
-                      decoration: BoxDecoration(
-                        color: Colors.grey[100],
-                        borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                Container(
+                  width: double.infinity,
+
+                  child: Row(
+
+                    children: <Widget>[
+
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Container (
+                              margin: EdgeInsets.only(left: 10, top: 10),
+                              child: Text(
+                                place.name,
+                                maxLines: 1,
+                                style: GoogleFonts.openSans(
+                                    fontSize: 18,
+                                    color: Colors.grey[800],
+                                    fontWeight: FontWeight.w700
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+
+                            Container (
+                              margin: EdgeInsets.only(left: 10, right: 10),
+                              child: Text(
+                                  place.description,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: GoogleFonts.capriola(
+                                    fontSize: 14,
+                                    color: Colors.grey[800],
+                                    fontWeight: FontWeight.w100,
+                                  )
+                              ),
+                            )
+                          ],
+                        ),
                       ),
 
-                      child: Column(
-                        children: <Widget>[
-
-                          Text(
-                              'Доставка',
-                              style: GoogleFonts.montserratAlternates(
-                                fontSize: 16,
-                                color: Colors.blue,
-                              )
+                      Container(
+                          margin: EdgeInsets.only(right: 10, top: 7, left: 10),
+//                  height: 40,
+                          padding: EdgeInsets.only(left: 10, top: 5, right: 10, bottom: 5),
+                          decoration: BoxDecoration(
+                            color: Colors.grey[100],
+                            borderRadius: BorderRadius.all(Radius.circular(5.0)),
                           ),
 
-                          Text(
-                              'от ' + place.deliveryMinPrice.toString() + ' KZT',
-                              style: GoogleFonts.montserratAlternates(
-                                fontSize: 16,
-                                color: Colors.blue,
-                                fontWeight: FontWeight.bold,
-                              )
-                          ),
-                        ],
-                      )
+                          child: Column(
+                            children: <Widget>[
 
+                              Text(
+                                  'Доставка',
+                                  style: GoogleFonts.montserratAlternates(
+                                    fontSize: 16,
+                                    color: Colors.blue,
+                                  )
+                              ),
+
+                              Text(
+                                  'от ' + place.deliveryMinPrice.toString() + ' KZT',
+                                  style: GoogleFonts.montserratAlternates(
+                                    fontSize: 16,
+                                    color: Colors.blue,
+                                    fontWeight: FontWeight.bold,
+                                  )
+                              ),
+                            ],
+                          )
+
+                      ),
+
+                    ],
                   ),
 
-                ],
-              ),
+                )
 
-            )
-
+              ],
+            ),
           ],
         ),
 

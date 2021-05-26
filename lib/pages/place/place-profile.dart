@@ -643,7 +643,7 @@ class PlaceProfileState extends State<PlaceProfile>{
                   imageUrl: (selectedItem.image != null) ? Network.shared.host() + selectedItem.image : "http://receptimari.com/wp-content/themes/neptune-by-osetin/assets/img/placeholder.jpg",
                   placeholder: (context, url) => Image.asset('assets/images/food-placeholder.png'),
                   errorWidget: (context, url, error) => Icon(Icons.error),
-                  fit: BoxFit.fitWidth,
+                  fit: BoxFit.cover,
                 ),
               ),
 
