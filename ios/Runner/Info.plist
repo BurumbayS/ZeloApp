@@ -44,10 +44,12 @@
 	<key>NSContactsUsageDescription</key>
 	<string>Need contacts when in use</string>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>Can I haz location always?</string>
+	<string>Need location when in use</string>
 	<key>NSLocationUsageDescription</key>
-	<string>Older devices need location.</string>
+	<string>Need location when in use</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Need location when in use</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>Need location when in use</string>
 	<key>NSMotionUsageDescription</key>
 	<string>This app needs to be able to access your motion use</string>
