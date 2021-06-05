@@ -248,6 +248,7 @@ class PlaceProfileState extends State<PlaceProfile>{
 
   Future<bool> isAuthenticated() async {
     String value = await Storage.itemBy('token');
+
     if (value != null) {
       return true;
     }

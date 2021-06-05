@@ -26,7 +26,7 @@ class User {
   }
 
   static void logout() {
-    Storage.shared.deleteItem('token');
-    Storage.shared.deleteItem('user_data');
+    Storage.shared.setItem("token", null);
+    Storage.shared.setItem("user_data", null);
   }
 }

@@ -117,6 +117,7 @@ class OrderPageState extends State<OrderPage> {
   }
 
   bool _orderCompleted() {
+    print(_order.contactPhone);
     if (_order.deliveryAddress.firstAddress == "") {
       showDialog(context: context, builder: (_) =>  CustomAlertDialog.shared.dialog("Простите", "Укажите адрес", true, context, (){} ));
       return false;
@@ -192,7 +193,6 @@ class OrderPageState extends State<OrderPage> {
     });
 
     var json = jsonDecode(response.body);
-    print(json);
 
     if (json['code'] == 0) {
       Order placedOrder = Order.fromJson(json['order']);
